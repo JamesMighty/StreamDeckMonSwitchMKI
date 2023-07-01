@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="128"
+   height="128"
+   viewBox="0 0 64 64"
+   id="monitor"
+   version="1.1"
+   sodipodi:docname="computer-monitor-white.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs16" />
+  <sodipodi:namedview
+     id="namedview14"
+     pagecolor="#252525"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="true"
+     inkscape:zoom="31.312501"
+     inkscape:cx="84.167661"
+     inkscape:cy="78.051893"
+     inkscape:window-width="3440"
+     inkscape:window-height="1377"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="main_layer">
+    <inkscape:grid
+       type="xygrid"
+       id="grid302" />
+  </sodipodi:namedview>
+  <g
+     id="main_layer"
+     transform="matrix(0.93987105,0,0,0.93054341,3.9419869,35.949899)">
+    <path
+       d="m 4.069367,-25.737541 a 1.8798783,1.8822311 0 0 0 -1.8796907,1.882048 V 13.78536 a 1.8798783,1.8822311 0 0 0 1.8796907,1.882048 h 24.435976 v 3.76776 h -5.63173 a 1.8798786,1.8822314 0 0 0 -0.194576,0 1.8840396,1.8863976 0 0 0 0.194576,3.76776 h 15.026512 a 1.881526,1.8838808 0 1 0 0,-3.76776 h -5.635401 v -3.76776 H 56.7007 A 1.8798783,1.8822311 0 0 0 58.580391,13.78536 V -23.855493 A 1.8798783,1.8822311 0 0 0 56.7007,-25.737541 Z m 1.8796905,3.764086 H 54.821009 V 11.903322 H 5.9490575 Z"
+       id="monitor_outline"
+       style="fill:#ffffff;stroke-width:1.00347" />
+    <path
+       d="m 34.640906,7.0390882 c -2.7e-5,2.3739933 -1.905439,4.2984808 -4.255873,4.2984818 -2.35044,8e-6 -4.255859,-1.9244815 -4.255887,-4.2984818 -6e-5,-2.3740632 1.905386,-4.2986516 4.255887,-4.2986454 2.350496,2.4e-6 4.25593,1.9245885 4.255873,4.2986454 z"
+       id="monitor_button"
+       style="fill:#ffffff;stroke-width:1.09811"
+       sodipodi:nodetypes="cscsc" />
+  </g>
+</svg>
