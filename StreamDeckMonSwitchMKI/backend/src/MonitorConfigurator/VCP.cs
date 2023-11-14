@@ -107,8 +107,7 @@ namespace StreamDeckMonSwitchMKI.ddcmon
         public static readonly VCPProperty   POWER_MODE                          = new VCPProperty(0xD6, "Power mode", VCPPropertyPerms.READ_WRITE);
 
 
-        public static readonly List<VCPProperty> List = new List<VCPProperty>()
-        {
+        public static readonly List<VCPProperty> List = new List<VCPProperty>() {
             NEW_CONTROL_VALUE,
             RESTORE_FACTORY_DEFAULTS,
             RESTORE_FACTORY_LUMINANCE_CONTRAST,
@@ -136,7 +135,7 @@ namespace StreamDeckMonSwitchMKI.ddcmon
             POWER_MODE
         };
 
-        public static Dictionary<uint, VCPProperty> IndexByHexCode { 
+        public static Dictionary<uint, VCPProperty> IndexByHexCode {
             get {
                 return List.ToDictionary(prop => prop.code, prop => prop);
             } 

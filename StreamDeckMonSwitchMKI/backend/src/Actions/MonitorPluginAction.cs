@@ -20,7 +20,7 @@ using System.Threading;
 namespace StreamDeckMonSwitchMKI
 {
 
-    [PluginActionId("streamdeckmonswitchmki.monitorpluginaction")]
+    [PluginActionId("com.elgato.streamdeck.streamdeckmonswitch.monitorpluginaction")]
     public class MonitorPluginAction : KeypadBase
     {
         public bool isChangingVCP { get; private set; }
@@ -49,7 +49,11 @@ namespace StreamDeckMonSwitchMKI
 
         public MonitorPluginAction(SDConnection connection, InitialPayload payload) : base(connection, payload)
         {
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "Initial settings payload:\n" + JObject.FromObject(payload).ToString());
+            Logger.Instance.LogMessage(
+                TracingLevel.DEBUG,
+                "Initial settings payload:\n" + JObject.FromObject(payload).ToString()
+                );
+
             this.Settings = PluginSettings.CreateDefaultSettings();
             if (payload.Settings == null || payload.Settings.Count == 0)
             {
@@ -60,20 +64,25 @@ namespace StreamDeckMonSwitchMKI
                 try
                 {
                     this.Settings = payload.Settings.ToObject<PluginSettings>();
-                    Logger.Instance.LogMessage(TracingLevel.DEBUG, "Initial loaded settings:\n" + JObject.FromObject(Settings).ToString());
+                    Logger.Instance.LogMessage(
+                        TracingLevel.DEBUG,
+                        "Initial loaded settings:\n" + JObject.FromObject(Settings).ToString()
+                        );
                 }
                 catch (Exception ex)
                 {
-                    Logger.Instance.LogMessage(TracingLevel.WARN, "Could not load persistent settings from object:\n "+payload.Settings.ToString(Formatting.Indented)+"\n got error:\n" + ex.ToString());
+                    Logger.Instance.LogMessage(TracingLevel.WARN,
+                        "Could not load persistent settings from object:\n "
+                        + payload.Settings.ToString(Formatting.Indented) 
+                        + "\n got error:\n" 
+                        + ex.ToString());
                 }
             }
-            
 
             IconManager.Register(this);
 
             Connection.OnSendToPlugin += Connection_OnSendToPlugin;
         }
-
 
 
         public void PushIcon()
@@ -110,7 +119,10 @@ namespace StreamDeckMonSwitchMKI
                         }
                         else
                         {
-                            success = MonitorConfigurator.SetVCPFeature(monitorSearch.First().Struct.hPhysicalMonitor, VCP_PROPS.IndexByCodeName[vcpSetting.Key].code, vcpSetting.Value);
+                            success = MonitorConfigurator.SetVCPFeature(
+                                monitorSearch.First().Struct.hPhysicalMonitor,
+                                VCP_PROPS.IndexByCodeName[vcpSetting.Key].code,
+                                vcpSetting.Value);
                         }
 
                         if (success)
@@ -136,11 +148,11 @@ namespace StreamDeckMonSwitchMKI
         public override void ReceivedSettings(ReceivedSettingsPayload payload)
         {
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "ReceivedSettings Payload:\n" + JsonConvert.SerializeObject(payload, Formatting.Indented));
+
             if (payload.Settings != null)
             {
                 try
                 {
-
                     var newSettings = payload.Settings.ToObject<PluginSettings>();
                     var todo = new List<Action>();
 
@@ -155,18 +167,29 @@ namespace StreamDeckMonSwitchMKI
                     }
 
                     Settings = newSettings;
-                    Logger.Instance.LogMessage(TracingLevel.DEBUG, "New set settings:\n" + JObject.FromObject(Settings).ToString());
+
+                    Logger.Instance.LogMessage(TracingLevel.DEBUG, 
+                        "New set settings:\n" 
+                        + JObject.FromObject(Settings).ToString());
+
                     UpdateInspector();
                     todo.ForEach(action => action());
                 } catch (Exception ex)
                 {
-                    Logger.Instance.LogMessage(TracingLevel.WARN, "ReceivedSettings: Could not read settings from object:\n"+payload.Settings.ToString(Formatting.Indented)+"\n with exception:'\n" + ex.ToString());
+                    Logger.Instance.LogMessage(TracingLevel.WARN, 
+                        "::ReceivedSettings - Could not read settings from object:\n"
+                        + payload.Settings.ToString(Formatting.Indented)
+                        + "\n with exception:'\n" 
+                        + ex.ToString());
                 }
             }
             
         }
 
-        public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) { }
+        public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) {
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, 
+                "::ReceivedGlobalSettings - not implemented ... skipping ");
+        }
 
         #endregion
 
@@ -181,8 +204,15 @@ namespace StreamDeckMonSwitchMKI
         {
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "Getting monitors ..");
 
-            var monitorsPayloadRaw = MonitorConfigurator.Monitors.Select(monitor => new InspectorDataSourceItemDTO(monitor.model, monitor.model)).ToList<IInspectorDataSourceItemDTO>();
-            if (monitorsPayloadRaw.Count == 0) return;
+            var monitorsPayloadRaw = MonitorConfigurator.Monitors.Select(monitor => 
+                new InspectorDataSourceItemDTO(monitor.model, monitor.model)
+                ).ToList<IInspectorDataSourceItemDTO>();
+
+            if (monitorsPayloadRaw.Count == 0)
+            {
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, "no monitors found");
+                return;
+            };
 
             var monitorspayload = JObject.FromObject(new InspectorDataSourceDTO("getMonitors", monitorsPayloadRaw));
             Connection.SendToPropertyInspectorAsync(monitorspayload);
@@ -197,11 +227,18 @@ namespace StreamDeckMonSwitchMKI
                 .Select(monitor =>
                         new InspectorDataSourceItemGroupDTO(monitor.model,
                         monitor.possibleVCPValues
-                            .Where(vcp => vcp.Key.codeName != VCP_PROPS.UNKNOWN_CODE_NAME && vcp.Key.perms.HasFlag(VCPPropertyPerms.WRITE) && monitor.possibleVCPValues[vcp.Key].Count > 0)
+                            .Where(vcp => vcp.Key.codeName != VCP_PROPS.UNKNOWN_CODE_NAME)
+                            .Where(vcp => vcp.Key.perms.HasFlag(VCPPropertyPerms.WRITE))
+                            .Where(vcp => monitor.possibleVCPValues[vcp.Key].Count > 0)
                             .Select(vcp => new InspectorDataSourceItemDTO(vcp.Key.codeName, vcp.Key.codeName))
                             .ToList<IInspectorDataSourceItemDTO>())
                 ).ToList<IInspectorDataSourceItemDTO>();
-            if (propertiesPayloadRaw.Count == 0) return;
+
+            if (propertiesPayloadRaw.Count == 0)
+            {
+                Logger.Instance.LogMessage(TracingLevel.DEBUG, "no properties found");
+                return;
+            };
 
             var propertiesPayload = JObject.FromObject(new InspectorDataSourceDTO("getProperties", propertiesPayloadRaw));
             Connection.SendToPropertyInspectorAsync(propertiesPayload);
@@ -217,16 +254,19 @@ namespace StreamDeckMonSwitchMKI
                     new InspectorDataSourceItemGroupDTO(
                         monitor.model,
                         monitor.possibleVCPValues
-                            .Where(vcp => vcp.Key.codeName != VCP_PROPS.UNKNOWN_CODE_NAME && vcp.Key.perms.HasFlag(VCPPropertyPerms.WRITE))
+                            .Where(vcp => vcp.Key.codeName != VCP_PROPS.UNKNOWN_CODE_NAME)
+                            .Where(vcp => vcp.Key.perms.HasFlag(VCPPropertyPerms.WRITE))
                             .Where(vcp => Settings.Properties[monitor.model].Contains(vcp.Key.codeName))
                             .Select(vcp =>
                                 new InspectorDataSourceItemGroupDTO(
                                     vcp.Key.codeName,
-                                    vcp.Value.Select(vcpValue => new InspectorDataSourceItemDTO(vcpValue.ToString(), vcpValue.ToString())).ToList<IInspectorDataSourceItemDTO>()
+                                    vcp.Value.Select(vcpValue => 
+                                        new InspectorDataSourceItemDTO(vcpValue.ToString(), vcpValue.ToString())
+                                        ).ToList<IInspectorDataSourceItemDTO>()
                                 )
                             ).ToList<IInspectorDataSourceItemDTO>()
-                    )
-                ).ToList<IInspectorDataSourceItemDTO>();
+                        )
+                    ).ToList<IInspectorDataSourceItemDTO>();
 
             if (valuesPayloadRaw.Count == 0)
             {
@@ -256,7 +296,11 @@ namespace StreamDeckMonSwitchMKI
         private void Connection_OnSendToPlugin(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.SendToPlugin> e)
         {
             var payload = e.Event.Payload;
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, "OnSendToPlugin Payload:\n" + JsonConvert.SerializeObject(payload));
+
+            Logger.Instance.LogMessage(TracingLevel.DEBUG,
+                "OnSendToPlugin Payload:\n" 
+                + JsonConvert.SerializeObject(payload));
+
             if (payload.ContainsKey("event"))
             {
                 switch (payload.GetValue("event").Value<string>())
@@ -275,7 +319,9 @@ namespace StreamDeckMonSwitchMKI
                         UpdateInspectorValues();
                         break;
                     default:
-                        Logger.Instance.LogMessage(TracingLevel.WARN, "Got unknown settings:\n" + JsonConvert.SerializeObject(payload));
+                        Logger.Instance.LogMessage(TracingLevel.WARN, 
+                            "Got unknown settings:\n" 
+                            + JsonConvert.SerializeObject(payload));
                         break;
                 }
             }

@@ -101,16 +101,15 @@ namespace StreamDeckMonSwitchMKI.ddcmon
                     case ')':
                         
                         floor--;
-                        if (floor > 1)
-                        {
-                            value += " " + capabilities[cadet];
-                        }
                         switch (floor)
                         {
                             case 1:
                                 keyValuePairs.Add(key, value);
                                 key = "";
                                 value = "";
+                                break;
+                            default:
+                                value += " " + capabilities[cadet];
                                 break;
                         }
                         break;
@@ -133,7 +132,8 @@ namespace StreamDeckMonSwitchMKI.ddcmon
                 switch(kvp.Key)
                 {
                     case "cmds":
-                        monitor.cmds.AddRange(kvp.Value.Split(' ').Select(str => int.Parse(str, System.Globalization.NumberStyles.HexNumber)));
+                        monitor.cmds.AddRange(kvp.Value.Split(' ')
+                            .Select(str => int.Parse(str, System.Globalization.NumberStyles.HexNumber)));
                         break;
                     case "vcp":
                         var vcps = kvp.Value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -154,8 +154,6 @@ namespace StreamDeckMonSwitchMKI.ddcmon
                             }
 
                             var vcpHex = uint.Parse(vcp, System.Globalization.NumberStyles.HexNumber);
-
-
                             if (vcpFloor == 0)
                             {
                                 if (lastVCPHex != 0)
@@ -191,6 +189,7 @@ namespace StreamDeckMonSwitchMKI.ddcmon
 
     public static class MonitorConfigurator
     {
+        public static int UPDATE_PERIOD_MS = 10 * 1000;
 
         public static List<PhysicalMonitor> Monitors { get; private set; } = new List<PhysicalMonitor>();
         private static List<PhysicalMonitor> LoadingMonitors { get; set; } = new List<PhysicalMonitor>();
@@ -206,7 +205,7 @@ namespace StreamDeckMonSwitchMKI.ddcmon
             UpdateMonitorsTimer = new Timer((s) => {
                 UpdateMonitors();
                 OnUpdateMonitors?.Invoke();
-                }, 0, 1000 * 10, 1000 * 10);
+                }, 0, UPDATE_PERIOD_MS, UPDATE_PERIOD_MS);
         }
 
         [DllImport("Dxva2.dll", EntryPoint = "GetCapabilitiesStringLength", SetLastError = true)]

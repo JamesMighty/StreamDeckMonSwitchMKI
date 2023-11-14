@@ -33,37 +33,39 @@
 
     function setByPath(obj, path, value) {
         console.log("setByPath: path: " + path + ", value: " + value + ", to obj: ", obj);
+
         var parts = path.split('.').filter(element => element);
         var o = obj;
-        if (parts.length > 1) {
-            for (var i = 0; i < parts.length - 1; i++) {
+        var last_part = parts.length - 1
+
+        if (last_part > 0) {
+            for (var i = 0; i < last_part; i++) {
                 if (!o[parts[i]])
                     o[parts[i]] = {};
                 o = o[parts[i]];
             }
         }
-        if (!o[parts[parts.length - 1]])
-            o[parts[parts.length - 1]] = [];
-        if (!Array.isArray(o[parts[parts.length - 1]])) {
-            console.warn("Values is not array, this is weird")
-            o[parts[parts.length - 1]] = [];
-        }
-        console.log("values before set: ", o[parts[parts.length - 1]])
-        o[parts[parts.length - 1]].push(value);
-        console.log("values after set: ", o[parts[parts.length - 1]])
+        
+        o[parts[last_part]] = [];
+        console.log("values before set: ", o[parts[last_part]])
+        o[parts[last_part]].push(value);
+        console.log("values after set: ", o[parts[last_part]])
     }
 
     function getByPath(obj, path) {
         console.log("getByPath: path: " + path + ", from obj: ", obj);
+
         var parts = path.split('.').filter(element => element);
         var o = obj;
+
         if (parts.length > 1) {
             for (var i = 0; i < parts.length - 1; i++) {
                 if (!o[parts[i]])
-                    o[parts[i]] = {};
+                    return [];
                 o = o[parts[i]];
             }
         }
+
         return o[parts[parts.length - 1]] || []
     }
     function removeItemOnce(arr, value) {
@@ -1279,10 +1281,24 @@
             `
             ];
         }
-        _replaceGrouping(group, child) {
-            child.groups = (child.groups || "") + "." + group.label.toString();
-            console.log("Replace child:", child, "in group", group);
+        _placeInGroup(group, child) {
+            if (child.groups) {
+                child.groups += "." + group.label.toString();
+            } else {
+                child.groups = group.label.toString();
+            }
+             
+            console.log("Placed child:", child, " to group", group);
             return child;
+        }
+        _get_is_checked(item) {
+            var path = item.groups || "."
+            var search = getByPath(this, 'value' + path);
+            console.log("::_get_is_checked - search: ", search);
+            if (Array.isArray(search)) {
+                return search.findIndex((v) => v == item.value) > -1;
+            }
+            return search == item.value;
         }
         render() {
             return this.items.render({
@@ -1290,40 +1306,48 @@
                 complete: () =>
                     this.renderGrid(
                         this.renderDataSource(
-                            (item) =>
-
-                                this.renderCheckable('checkbox', y`
+                            (item) => {
+                                console.log("Render input label", item.label)
+                                return this.renderCheckable('checkbox', y`${keyed()}
                                     <input
                                         type="checkbox"
-                                        .groups="${this.groups}"
-                                        .checked="${ getByPath(this, 'value.' + this.groups).findIndex((v) => v == item.value) > -1 || false }"
+                                        data-groups=${item.groups || "."}
+                                        .groups=${item.groups || "."}
+                                        .checked="${this._get_is_checked(item)}"
                                         .disabled=${this.disabled || item.disabled || false}
                                         .value=${item.value}
-                                        @change=${this.handleChange}
+                                        @change=${(ev) => this.handleChange(ev, item)}
                                     />
-                                `,
-                                    item.label)
-                            ,
-                            (group, children) => { var _a; return y`${((_a = group.label) === null || _a === void 0 ? void 0 : _a.toString()) || ''}<hr/>${children.filter(child => this._replaceGrouping(group, child))}</div><br/>`; }
+                                `, item.label);
+                            },
+                            (group, children) => {
+                                var _a;
+                                return y`${((_a = group.label) === null || _a === void 0 ? void 0 : _a.toString()) || ''}<hr/>${children.filter(child => this._placeInGroup(group, child))}</div><br/>`;
+                            }
                         )
                     )
             });
         }
-        handleChange(ev) {
+        handleChange(ev, item) {
             const value = this.parseValue(ev.target.value);
+            var this_mock = {
+                "value": this.value
+            }
             if (value === undefined) {
                 return;
-                this.value = this.value // trigger valuechanged event
             }
-            const grouping = ev.target.groups || ""
+            console.log("Event target: ", ev.target, "dataset: ", ev.target.dataset, " item: ", item)
+            console.log(jQuery(ev.target)).attr("groups")
+            const grouping = item.groups || "."
             if (ev.target.checked) { 
-                setByPath(this, "value." + grouping, value);
+                setByPath(this_mock, "value" + grouping, value);
             }
             else {
-                removeByPath(this, "value."+ grouping, value);
+                removeByPath(this_mock, "value"+ grouping, value);
             }
-            this.value = this.value // trigger valuechanged event
+            this.value = JSON.parse(JSON.stringify(this_mock.value)); // trigger valuechanged event
             console.log("Values: ", this.value);
+            return;
         }
     };
     CheckboxList = __decorate([

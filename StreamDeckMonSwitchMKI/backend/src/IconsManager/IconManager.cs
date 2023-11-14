@@ -16,6 +16,16 @@ using System.Xml;
 
 namespace StreamDeckMonSwitchMKI
 {
+    public enum TimerStates
+    {
+        WORKING = 0x01,
+        IDLE = 0x02
+    }
+
+    public class TimerState
+    {
+        public TimerStates CurrentStatus = TimerStates.IDLE;
+    }
 
     public class MonitorStatus
     {
@@ -50,17 +60,26 @@ namespace StreamDeckMonSwitchMKI
         static IconManager()
         {
             AutoUpdateTimer = new Timer((state) => {
-                try
+                if (((TimerState)state).CurrentStatus == TimerStates.IDLE)
                 {
-                    //var stops = new Stopwatch();
-                    //stops.Start();
-                    UpdateIcons();
-                    //stops.Stop();
-                    //Logger.Instance.LogMessage(TracingLevel.DEBUG, "IconManager: Icons updated in " +  stops.ElapsedMilliseconds/1000d +  "s");
-                } catch (Exception err) {
-                    Logger.Instance.LogMessage(TracingLevel.WARN, "IconManager: Could not update icons - "+err.ToString());
+                    ((TimerState)state).CurrentStatus = TimerStates.WORKING;
+                    try
+                    {
+                        //var stops = new Stopwatch();
+                        //stops.Start();
+                        UpdateIcons();
+                        //stops.Stop();
+                        //Logger.Instance.LogMessage(TracingLevel.DEBUG, "IconManager: Icons updated in " +  stops.ElapsedMilliseconds/1000d +  "s");
+                    }
+                    catch (Exception err)
+                    {
+                        Logger.Instance.LogMessage(TracingLevel.WARN, "IconManager: Could not update icons - " + err.ToString());
+                    }
+                    finally { 
+                        ((TimerState)state).CurrentStatus = TimerStates.IDLE;
+                    }
                 }
-            }, 0, 1000*5, 1000*2);
+            }, new TimerState(), 1000*5, 1000*2);
         }
 
         public static SvgDocument MakeIcon(MonitorPluginAction action)
@@ -88,7 +107,9 @@ namespace StreamDeckMonSwitchMKI
             }else if (action.Settings.VCPActionsSettings.Count == 1)
             {
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, "Making single-monitor icon");
-                var physicalMonitors = MonitorConfigurator.Monitors.Where(mon => mon.model == action.Settings.VCPActionsSettings.First().Key);
+                var physicalMonitors = MonitorConfigurator.Monitors.Where(
+                    mon => mon.model == action.Settings.VCPActionsSettings.First().Key
+                    );
                 if (physicalMonitors.Count() > 0) {
                     var physicalMonitor = physicalMonitors.First();
 

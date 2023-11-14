@@ -1,4 +1,9 @@
-﻿To use:
+﻿
+
+
+## StreamDeck SDK redme:
+
+To use:
 1. Right click the project and choose "Manage Nuget Packages"
 2. Choose the restore option in the Nuget screen (or just install the latest StreamDeck-Tools from Nuget)
 3. Update the manifest.json file with the correct details about your plugin
@@ -11,4 +16,3 @@ For help with StreamDeck-Tools:
 Resources:
 * StreamDeck-Tools samples and tutorial: https://github.com/BarRaider/streamdeck-tools
 * EasyPI library (for working with Property Inspector): https://github.com/BarRaider/streamdeck-easypi
-

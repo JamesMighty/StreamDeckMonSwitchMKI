@@ -71,8 +71,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseAndRun|AnyCPU'">
     <OutputPath>bin\ReleaseAndRun\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -81,12 +80,14 @@
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <DebugSymbols>true</DebugSymbols>
+    <DocumentationFile>bin\ReleaseAndRun\StreamDeckMonSwitchMKI.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
-    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
-    <NoWin32Manifest>true</NoWin32Manifest>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommandLine, Version=2.9.1.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
@@ -104,8 +105,8 @@
     <Reference Include="NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.5.1.1\lib\net46\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="streamdeck-client-csharp, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\streamdeck-client-csharp.4.2.0\lib\netstandard2.0\streamdeck-client-csharp.dll</HintPath>
+    <Reference Include="streamdeck-client-csharp, Version=4.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\streamdeck-client-csharp.4.3.0\lib\netstandard2.0\streamdeck-client-csharp.dll</HintPath>
     </Reference>
     <Reference Include="StreamDeckTools, Version=6.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StreamDeck-Tools.6.1.1\lib\netstandard2.0\StreamDeckTools.dll</HintPath>
@@ -150,11 +151,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Source\IconsManager\IconManager.cs" />
-    <Compile Include="Source\MonitorConfigurator\MonitorConfigurator.cs" />
-    <Compile Include="Source\MonitorConfigurator\VCP.cs" />
-    <Compile Include="Source\DTOs\InspectorDataSourceDTO.cs" />
-    <Compile Include="Source\Actions\MonitorPluginAction.cs" />
+    <Compile Include="backend\src\IconsManager\IconManager.cs" />
+    <Compile Include="backend\src\MonitorConfigurator\MonitorConfigurator.cs" />
+    <Compile Include="backend\src\MonitorConfigurator\VCP.cs" />
+    <Compile Include="backend\src\DTOs\InspectorDataSourceDTO.cs" />
+    <Compile Include="backend\src\Actions\MonitorPluginAction.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -168,39 +169,42 @@
     <None Include="StreamDeckMonSwitchMKI_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="!!README!!.txt" />
-    <Content Include="Images\categoryIcon%402x.png">
+    <None Include="readme.md" />
+    <Content Include="frontend\images\categoryIcon%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\categoryIcon.png">
+    <Content Include="frontend\images\categoryIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\computer-monitor-white.svg">
+    <Content Include="backend\img\computer-monitor-white.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\icon%402x.png">
+    <Content Include="frontend\images\icon%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\icon.png">
+    <Content Include="frontend\images\icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\pluginAction%402x.png">
+    <Content Include="frontend\images\pluginAction%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\pluginAction.png">
+    <Content Include="frontend\images\pluginAction.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\pluginIcon%402x.png">
+    <Content Include="frontend\images\pluginIcon%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\pluginIcon.png">
+    <Content Include="frontend\images\pluginIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PropertyInspector\PluginActionPI.html">
+    <Content Include="frontend\property_inspector\code.jquery.com_jquery-3.7.1.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="PropertyInspector\sdpi-components.js" />
-    <Content Include="PropertyInspector\sdpi-components_custom.js">
+    <Content Include="frontend\property_inspector\PluginActionPI.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="frontend\property_inspector\sdpi-components.js" />
+    <Content Include="frontend\property_inspector\sdpi-components_custom.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -218,18 +222,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\" />
+    <Folder Include="frontend\sdpi_components\" />
   </ItemGroup>
   <ItemGroup>
-    <PublishFile Include="!!README!!.txt">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Exclude</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
     <PublishFile Include="CommandLine">
       <Visible>False</Visible>
       <Group>
@@ -390,6 +385,16 @@
       <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
+    <PublishFile Include="readme.md">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
     <PublishFile Include="streamdeck-client-csharp">
       <Visible>False</Visible>
       <Group>
@@ -484,7 +489,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == ReleaseAndRun (
-    xcopy /H /Y /R /E $(TargetDir) c:\Users\user\AppData\Roaming\Elgato\StreamDeck\Plugins\streamdeckmonswitch.sdPlugin\
+    xcopy /H /Y /R /E $(TargetDir) c:\Users\JJ\AppData\Roaming\Elgato\StreamDeck\Plugins\com.elgato.streamdeck.streamdeckmonswitch.sdPlugin\
 )</PostBuildEvent>
   </PropertyGroup>
 </Project>
