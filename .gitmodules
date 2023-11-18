@@ -1,3 +1,3 @@
-[submodule "StreamDeckMonSwitchMKI/frontend/sdpi_components/sdpi-components"]
-	path = StreamDeckMonSwitchMKI/frontend/sdpi_components/sdpi-components
+[submodule "sdpi-components"]
+	path = frontend/sdpi_components
 	url = https://github.com/JamesMighty/sdpi-components.git
