@@ -1,0 +1,31 @@
+{
+    "compilerOptions": {
+        /* core */
+        "target": "ES2017",
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "outDir": "./dist/lib",
+
+        /* strictness */
+        "strict": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "strictBindCallApply": true,
+        "strictPropertyInitialization": true,
+        "noImplicitThis": true,
+        "alwaysStrict": true,
+        "noImplicitReturns": true,
+
+        /* misc */
+        "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "removeComments": true,
+        "sourceMap": true,
+
+        /* typings */
+        "typeRoots": ["node_modules/@jest", "node_modules/@types", "src/typings"]
+    },
+    "exclude": ["node_modules"]
+}

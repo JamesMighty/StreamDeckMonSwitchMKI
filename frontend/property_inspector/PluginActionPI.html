@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover">
+    <meta name=apple-mobile-web-app-capable content=yes>
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
+    <title>StreamDeckMonSwitchMKI Settings</title>
+    <script src="code.jquery.com_jquery-3.7.1.min.js"></script>
+    <script src="sdpi-components.js"></script>
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div class="sdpi-item" id="dvMonitors">
+            <sdpi-item label="Monitors">
+                <sdpi-checkbox-list-custom id="monitors_selection" setting="monitors" columns="2" datasource="getMonitors" loading="Fetching monitors..." hot-reload>
+
+                </sdpi-checkbox-list-custom>
+            </sdpi-item>
+        </div>
+        <div class="sdpi-item" id="dvProperties">
+            <sdpi-item label="VCP Properties">
+                <sdpi-checkbox-list-custom id="properties_selection" setting="properties" columns="2" datasource="getProperties">
+
+                </sdpi-checkbox-list-custom>
+            </sdpi-item>
+        </div>
+        <div class="sdpi-item" id="dvValues">
+            <sdpi-item label="VCP Values">
+                <sdpi-checkbox-list-custom id="values_selection" setting="values" columns="2" datasource="getValues">
+
+                </sdpi-checkbox-list-custom>
+            </sdpi-item>
+        </div>
+    </div>
+</body>
+</html>

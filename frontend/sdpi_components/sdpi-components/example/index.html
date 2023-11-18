@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>com.geekyeggo.sdpi.sdPlugin</title>
+    <meta charset="utf-8" />
+</head>
+
+<body>
+    <script>
+        const colors = [{
+            label: '__MSG_primary__',
+            children: [{
+                label: '__MSG_red__',
+                value: '#ff0000'
+            }, {
+                label: '__MSG_green__',
+                value: '#00ff00'
+            }, {
+                label: '__MSG_blue__',
+                value: '#0000ff'
+            }]
+        }, {
+            label: '__MSG_black__',
+            value: '#000000'
+        }, {
+            label: '__MSG_white__',
+            value: '#ffffff'
+        }];
+
+        const numbers = [{
+            label: "One",
+            value: "1"
+        },
+        {
+            label: "Two",
+            value: "2"
+        },
+        {
+            label: "Three",
+            value: "3"
+        },
+        {
+            label: "Four",
+            value: "4"
+        },
+        {
+            label: "Five",
+            value: "5"
+        }]
+
+        function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, inInfo) {
+            console.log('Initializing plug-in.');
+            let count = 0;
+            let settingsCache = {};
+            const webSocket = new WebSocket(`ws://127.0.0.1:${inPort}`);
+
+            // Handle messages from the Stream Deck.
+            webSocket.onmessage = (e) => {
+                const msg = JSON.parse(e.data);
+                const { event, action, context } = msg;
+
+                console.log(msg);
+
+                switch (event) {
+                    case 'didReceiveSettings':
+                    case 'willAppear':
+                        settingsCache[context] = msg.payload.settings || {};
+                        break;
+
+                    case 'willDisappear':
+                        console.log('hello');
+                        delete settingsCache[context];
+                        console.log(settingsCache);
+                        break;
+
+                    case 'keyDown':
+                        webSocket.send(
+                            JSON.stringify({
+                                event: 'setTitle',
+                                context,
+                                payload: {
+                                    title: `${++count}`
+                                }
+                            })
+                        );
+
+                        break;
+
+                    case 'sendToPlugin':
+                        if (msg.payload?.event === 'getNow') {
+                            let payload = settingsCache[context] || {};
+                            payload['now'] = 'C:\\something\\goes\\here\\';
+
+                            webSocket.send(
+                                JSON.stringify({
+                                    event: 'setSettings',
+                                    context,
+                                    payload
+                                })
+                            )
+
+                            settingsCache[context] = payload;
+                        }
+
+                        const items = msg.payload?.event === 'getColors' ? colors
+                            : msg.payload?.event === 'getNumbers' ? numbers
+                                : undefined;
+
+                        if (items) {
+                            webSocket.send(
+                                JSON.stringify({
+                                    action,
+                                    event: 'sendToPropertyInspector',
+                                    context,
+                                    payload: {
+                                        event: msg.payload.event,
+                                        items
+                                    }
+                                })
+                            );
+                        }
+
+                        break;
+                }
+            };
+
+            // Register the plugin when the connection opens.
+            webSocket.onopen = () => {
+                console.log('Registering plug-in...');
+                webSocket.send(JSON.stringify({
+                    'event': inRegisterEvent,
+                    'uuid': inPluginUUID
+                }));
+            };
+        };
+    </script>
+</body>
+
+</html>

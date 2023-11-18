@@ -1,0 +1,65 @@
+{
+    "name": "sdpi-components",
+    "version": "2.6.2",
+    "description": "Web components for your Stream Deck plugin; take the hassle out of the property inspector.",
+    "main": "./dist/sdpi-components.js",
+    "scripts": {
+        "build": "rollup -c && rollup -c --dev && npm run install:example",
+        "build_only": "rollup -c && rollup -c --dev",
+        "format": "prettier --config .prettierrc './src/**/*.ts' --write",
+        "install:example": "node ./scripts/install-example.js",
+        "lint": "eslint . --ext .ts",
+        "test": "jest --verbose",
+        "test-silent": "jest",
+        "test:ci": "jest --verbose --coverage && node ./scripts/coverage-badge.js",
+        "preversion": "jest",
+        "version": "rollup -c && git add -A dist package* example/pi",
+        "watch": "rollup -c -w & npm run watch:example",
+        "watch:example": "onchange './example/**/*.*' -e './example/**/*.js' -- npm run install:example"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/GeekyEggo/sdpi-components.git"
+    },
+    "keywords": [
+        "stream-deck",
+        "stream",
+        "deck",
+        "property-inspector"
+    ],
+    "author": "GeekyEggo",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/GeekyEggo/sdpi-components/issues"
+    },
+    "homepage": "https://sdpi-components.dev",
+    "dependencies": {
+        "@lit-labs/task": "^2.0.0",
+        "lit": "^2.2.3"
+    },
+    "devDependencies": {
+        "@rollup/plugin-commonjs": "^23.0.0",
+        "@rollup/plugin-node-resolve": "^15.0.0",
+        "@rollup/plugin-typescript": "^9.0.1",
+        "@trivago/prettier-plugin-sort-imports": "^3.2.0",
+        "@types/babel__core": "^7.1.19",
+        "@types/jest": "^29.1.2",
+        "@typescript-eslint/eslint-plugin": "^5.24.0",
+        "@typescript-eslint/parser": "^5.24.0",
+        "eslint": "^8.12.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-prettier": "^4.0.0",
+        "fs-extra": "^10.0.1",
+        "jest": "^29.7.0",
+        "jest-environment-jsdom": "^29.1.2",
+        "jest-websocket-mock": "^2.3.0",
+        "onchange": "^7.1.0",
+        "prettier": "^2.6.1",
+        "rollup": "^3.1.0",
+        "rollup-plugin-minify-html-literals": "^1.2.6",
+        "rollup-plugin-terser": "^7.0.2",
+        "ts-jest": "^29.0.3",
+        "ts-node": "^10.9.1",
+        "typescript": "^4.6.4"
+    }
+}

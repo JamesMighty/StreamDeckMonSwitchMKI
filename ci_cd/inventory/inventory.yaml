@@ -1,0 +1,16 @@
+containers:
+  hosts:
+    frontend-builder:
+      ansible_host: frontend-builder
+    ansible-ctl:
+      ansible_host: localhost
+  vars:
+    workplace: "/opt/workplace"
+    plugin_home: "/opt/plugin_home"
+    release_dir: "/opt/release"
+
+all:
+  vars:
+    ansible_connection: "ssh"
+    ansible_user: "ansible"
+    ansible_ssh_pass: "ansible"

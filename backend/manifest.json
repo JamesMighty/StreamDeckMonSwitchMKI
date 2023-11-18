@@ -1,0 +1,38 @@
+{
+  "Author": "Jakhubko",
+  "Name": "StreamDeckMonSwitchMKI",
+  "Description": "Stream Deck Monitor Switch",
+  "Icon": "img/pluginIcon",
+  "URL": "",
+  "Version": "0.3",
+  "CodePath": "StreamDeckMonitorSwitch.exe",
+  "Category": "Monitor VCP Switch",
+  "CategoryIcon": "img/categoryIcon",
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "SDKVersion": 3,
+  "Software": {
+    "MinimumVersion": "4.9"
+  },
+  "Actions": [
+    {
+      "Icon": "img/icon",
+      "Name": "Change Monitor VCP",
+      "States": [
+        {
+          "Image": "img/pluginAction",
+          "TitleAlignment": "middle",
+          "FontSize": "10"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "",
+      "UUID": "com.elgato.streamdeck.streamdeckmonswitch.monitorpluginaction",
+      "PropertyInspectorPath": "src/PluginActionPI.html"
+    }
+  ]
+}

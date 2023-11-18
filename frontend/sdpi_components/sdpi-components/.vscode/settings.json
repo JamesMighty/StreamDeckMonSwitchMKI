@@ -1,0 +1,12 @@
+{
+    "files.eol": "\n",
+    "files.exclude": {
+        "src/**/*.js*": true,
+        "node_modules": true,
+        "**/.vs/": true
+    },
+    "importSorter.generalConfiguration.sortOnBeforeSave": true,
+    "html.format.wrapLineLength": 250,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+}

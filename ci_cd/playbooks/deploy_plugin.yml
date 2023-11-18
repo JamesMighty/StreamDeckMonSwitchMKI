@@ -1,0 +1,14 @@
+---
+- name: Deploy plugin
+  hosts: localhost
+
+  tasks:
+  - name: Delete content & directory
+    ansible.builtin.file:
+      state: absent
+      path: "{{ hostvars.release_dir }}"
+
+  - name: Copy files to Stream Deck plugin dir
+    ansible.builtin.copy:
+      src: "{{ hostvars.plugin_home }}/release/build/"
+      dest: "{{ hostvars.release_dir }}"

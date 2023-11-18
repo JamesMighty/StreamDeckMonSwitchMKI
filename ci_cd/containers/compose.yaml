@@ -1,0 +1,41 @@
+name: ansible-builder
+
+services:
+  ansible-ctl:
+    image: ansible-controller
+    build:
+      context: ../../
+      dockerfile: ci_cd/containers/controller.dockerfile
+
+    hostname: ansible-ctl
+    command: "post_backend_build.yml"
+    volumes:
+      - ../:/opt/workplace
+      - c:/Users/JJ/AppData/Roaming/Elgato/StreamDeck/Plugins/com.elgato.streamdeck.streamdeckmonswitch.sdPlugin:/opt/release
+      - //var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - defnet
+    deploy:
+      resources:
+        reservations:
+          cpus: "4.0"
+          memory: 200M
+
+  frontend-builder:
+    image: frontend-builder-host
+    build:
+      context: ../../
+      dockerfile: ci_cd/containers/worker_frontend.dockerfile
+    hostname: frontend-builder
+    volumes:
+      - ../:/opt/plugin_home
+    networks:
+      - defnet
+    deploy:
+      resources:
+        reservations:
+          cpus: "4.0"
+          memory: 200M
+
+networks:
+  defnet:
