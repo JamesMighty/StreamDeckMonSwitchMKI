@@ -1,14 +1,9 @@
-﻿using CommandLine;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Buffers;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 
 namespace StreamDeckMonitorSwitch.ddcmon
@@ -46,6 +41,7 @@ namespace StreamDeckMonitorSwitch.ddcmon
     [Serializable]
     public class PhysicalMonitor
     {
+#pragma warning disable IDE1006 // Naming Styles
         public string prot { get; private set; }
         public string type { get; private set; }
         public string model { get; private set; }
@@ -55,11 +51,10 @@ namespace StreamDeckMonitorSwitch.ddcmon
         public string asset_eep { get; private set; }
         public string mpu { get; private set; }
         public List<int> cmds { get; private set; } = new List<int>();
-
         public PHYSICAL_MONITOR Struct { get; private set;}
         public MonitorInfo info { get; private set; }
-
         public IntPtr device { get; private set; }
+#pragma warning restore IDE1006 // Naming Styles
 
         public PhysicalMonitor(string protocolClass, string type, string model, Dictionary<VCPProperty, List<int>> possibleVCPValues, string mswhhql, List<int> cmds)
         {
@@ -75,6 +70,7 @@ namespace StreamDeckMonitorSwitch.ddcmon
         {
         }
 
+#pragma warning disable IDE1006 // Naming Styles
         public static PhysicalMonitor fromEmumeration(char[] capabilities, uint capsLen, PHYSICAL_MONITOR fmon, MonitorInfo mi, IntPtr device)
         {
             PhysicalMonitor monitor = new PhysicalMonitor();
@@ -126,6 +122,7 @@ namespace StreamDeckMonitorSwitch.ddcmon
                         break;
                 }
             }
+#pragma warning restore IDE1006 // Naming Styles
 
             foreach (KeyValuePair<string, string> kvp in keyValuePairs)
             {
@@ -203,9 +200,10 @@ namespace StreamDeckMonitorSwitch.ddcmon
         {
             UpdateMonitors();
             UpdateMonitorsTimer = new Timer((s) => {
-                UpdateMonitors();
-                OnUpdateMonitors?.Invoke();
-                }, 0, UPDATE_PERIOD_MS, UPDATE_PERIOD_MS);
+                    UpdateMonitors();
+                    OnUpdateMonitors?.Invoke();
+                },
+                0, UPDATE_PERIOD_MS, UPDATE_PERIOD_MS);
         }
 
         [DllImport("Dxva2.dll", EntryPoint = "GetCapabilitiesStringLength", SetLastError = true)]
@@ -323,7 +321,7 @@ namespace StreamDeckMonitorSwitch.ddcmon
         }
 
         [STAThread]
-        public static void Main(string[] args)
+        public static void Main()
         { 
             MonitorEnumDelegate med = new MonitorEnumDelegate(MonitorEnum);
             EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, med, IntPtr.Zero);

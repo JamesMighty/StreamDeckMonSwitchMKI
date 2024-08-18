@@ -19,12 +19,13 @@ RUN apk add --no-cache \
         py3-pip \
 		sshpass \
 		tar \
+		rsync \
 		&& \
 	apk add --no-cache --virtual build-dependencies \
 		gcc \
-		make \
-		openssh && \
-	python3 -m ensurepip --upgrade \
+		make
+
+RUN python3 -m ensurepip --upgrade \
 		&& \
 	pip3 install \
 		ansible \
@@ -36,7 +37,6 @@ RUN apk add --no-cache \
 	apk del build-dependencies \
 		&& \
 	rm -rf /root/.cache
-
 
 RUN pip3 install --upgrade pip && \
     mkdir -p /etc/ansible/ /ansible /ansible/playbooks
@@ -51,11 +51,14 @@ ENV ANSIBLE_GATHERING=smart \
     ANSIBLE_LIBRARY=/ansible/library \
     EDITOR=nano
 
-COPY ci_cd/playbooks/ /ansible/playbooks/
-COPY ci_cd/inventory/ /ansible/inventory/
+RUN ansible-galaxy collection install ansible.posix
+RUN ansible-galaxy collection install ansible.windows
 
 WORKDIR /ansible/playbooks
 
 EXPOSE 22
+EXPOSE 830
 
-ENTRYPOINT ["ansible-playbook", "-vvv", "-i", "/ansible/inventory"]
+COPY ci_cd/data/ansible_controller_entrypoint.sh /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

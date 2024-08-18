@@ -365,3 +365,6 @@ FodyWeavers.xsd
 # Python
 __pycache__/
 .venv/
+
+# CICD secrets
+ci_cd/inventory/secrets.yml

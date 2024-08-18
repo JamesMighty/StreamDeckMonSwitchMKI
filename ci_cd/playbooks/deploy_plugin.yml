@@ -1,14 +1,32 @@
 ---
 - name: Deploy plugin
-  hosts: localhost
+  hosts: host-win
 
   tasks:
+  - name: Kill StreamDeck
+    ansible.windows.win_shell: "Stop-Process -Name StreamDeck -Force"
+    args:
+      executable: powershell
+    ignore_errors: true
+
   - name: Delete content & directory
-    ansible.builtin.file:
+    ansible.windows.win_file:
       state: absent
-      path: "{{ hostvars.release_dir }}"
+      path: "{{ hostvars[inventory_hostname].release_plugins_dir }}\\{{ hostvars[inventory_hostname].release_plugin_dir_name }}"
+
+  - name: Delete content & directory
+    ansible.windows.win_file:
+      state: directory
+      path: "{{ hostvars[inventory_hostname].release_plugins_dir }}\\{{ hostvars[inventory_hostname].release_plugin_dir_name }}"
 
   - name: Copy files to Stream Deck plugin dir
-    ansible.builtin.copy:
-      src: "{{ hostvars.plugin_home }}/release/build/"
-      dest: "{{ hostvars.release_dir }}"
+    ansible.windows.win_copy:
+      remote_src: true
+      src: "{{ hostvars[inventory_hostname].plugin_home }}\\release\\build\\"
+      dest: "{{ hostvars[inventory_hostname].release_plugins_dir }}\\{{ hostvars[inventory_hostname].release_plugin_dir_name }}"
+
+  - name: Start StreamDeck
+    ansible.windows.win_shell: |
+     Start-Process -FilePath '{{ hostvars[inventory_hostname].streamdeck_exe_path }}' -WindowStyle Maximized
+    args:
+      executable: powershell

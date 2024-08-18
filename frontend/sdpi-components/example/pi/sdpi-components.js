@@ -20,6 +20,8 @@
     OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
     PERFORMANCE OF THIS SOFTWARE.
     ***************************************************************************** */
+    /* global Reflect, Promise */
+
 
     function __decorate(decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -37,26 +39,26 @@
      * Copyright 2019 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const t$3=window,e$7=t$3.ShadowRoot&&(void 0===t$3.ShadyCSS||t$3.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$7=Symbol(),n$7=new WeakMap;let o$5 = class o{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$7)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$7&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$7.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$7.set(s,t));}return t}toString(){return this.cssText}};const r$3=t=>new o$5("string"==typeof t?t:t+"",void 0,s$7),i$6=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$5(n,t,s$7)},S$1=(s,n)=>{e$7?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$3.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$3=e$7?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$3(e)})(t):t;
+    const t$2=window,e$7=t$2.ShadowRoot&&(void 0===t$2.ShadyCSS||t$2.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$7=Symbol(),n$8=new WeakMap;let o$5 = class o{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$7)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$7&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$8.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$8.set(s,t));}return t}toString(){return this.cssText}};const r$3=t=>new o$5("string"==typeof t?t:t+"",void 0,s$7),i$7=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$5(n,t,s$7)},S$1=(s,n)=>{e$7?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$2.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$3=e$7?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$3(e)})(t):t;
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */var s$6;const e$6=window,r$2=e$6.trustedTypes,h$5=r$2?r$2.emptyScript:"",o$4=e$6.reactiveElementPolyfillSupport,n$6={toAttribute(t,i){switch(i){case Boolean:t=t?h$5:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$1=(t,i)=>i!==t&&(i==i||t==t),l$4={attribute:!0,type:String,converter:n$6,reflect:!1,hasChanged:a$1};let d$1 = class d extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;null!==(i=this.h)&&void 0!==i||(this.h=[]),this.h.push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$4){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$4}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$3(i));}else void 0!==i&&s.push(c$3(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$4){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$6).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$6;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$1)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}};d$1.finalized=!0,d$1.elementProperties=new Map,d$1.elementStyles=[],d$1.shadowRootOptions={mode:"open"},null==o$4||o$4({ReactiveElement:d$1}),(null!==(s$6=e$6.reactiveElementVersions)&&void 0!==s$6?s$6:e$6.reactiveElementVersions=[]).push("1.4.1");
+     */var s$6;const e$6=window,r$2=e$6.trustedTypes,h$5=r$2?r$2.emptyScript:"",o$4=e$6.reactiveElementPolyfillSupport,n$7={toAttribute(t,i){switch(i){case Boolean:t=t?h$5:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$2=(t,i)=>i!==t&&(i==i||t==t),l$4={attribute:!0,type:String,converter:n$7,reflect:!1,hasChanged:a$2},d$1="finalized";let u$1 = class u extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this._$Eu();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$4){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$4}static finalize(){if(this.hasOwnProperty(d$1))return !1;this[d$1]=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$3(i));}else void 0!==i&&s.push(c$3(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}_$Eu(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$4){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$7).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$7;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$2)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}};u$1[d$1]=!0,u$1.elementProperties=new Map,u$1.elementStyles=[],u$1.shadowRootOptions={mode:"open"},null==o$4||o$4({ReactiveElement:u$1}),(null!==(s$6=e$6.reactiveElementVersions)&&void 0!==s$6?s$6:e$6.reactiveElementVersions=[]).push("1.6.3");
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    var t$2;const i$5=window,s$5=i$5.trustedTypes,e$5=s$5?s$5.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$3=`lit$${(Math.random()+"").slice(9)}$`,n$5="?"+o$3,l$3=`<${n$5}>`,h$4=document,r$1=(t="")=>h$4.createComment(t),d=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u=Array.isArray,c$2=t=>u(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,a=/-->/g,f$1=/>/g,_=RegExp(">|[ \t\n\f\r](?:([^\\s\"'>=/]+)([ \t\n\f\r]*=[ \t\n\f\r]*(?:[^ \t\n\f\r\"'`<>=]|(\"|')|))|$)","g"),m=/'/g,p=/"/g,$=/^(?:script|style|textarea|title)$/i,g=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),y=g(1),x=Symbol.for("lit-noChange"),b=Symbol.for("lit-nothing"),T=new WeakMap,A=h$4.createTreeWalker(h$4,129,null,!1),E=(t,i)=>{const s=t.length-1,n=[];let h,r=2===i?"<svg>":"",d=v;for(let i=0;i<s;i++){const s=t[i];let e,u,c=-1,g=0;for(;g<s.length&&(d.lastIndex=g,u=d.exec(s),null!==u);)g=d.lastIndex,d===v?"!--"===u[1]?d=a:void 0!==u[1]?d=f$1:void 0!==u[2]?($.test(u[2])&&(h=RegExp("</"+u[2],"g")),d=_):void 0!==u[3]&&(d=_):d===_?">"===u[0]?(d=null!=h?h:v,c=-1):void 0===u[1]?c=-2:(c=d.lastIndex-u[2].length,e=u[1],d=void 0===u[3]?_:'"'===u[3]?p:m):d===p||d===m?d=_:d===a||d===f$1?d=v:(d=_,h=void 0);const y=d===_&&t[i+1].startsWith("/>")?" ":"";r+=d===v?s+l$3:c>=0?(n.push(e),s.slice(0,c)+"$lit$"+s.slice(c)+o$3+y):s+o$3+(-2===c?(n.push(void 0),i):y);}const u=r+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$5?e$5.createHTML(u):u,n]};class C{constructor({strings:t,_$litType$:i},e){let l;this.parts=[];let h=0,d=0;const u=t.length-1,c=this.parts,[v,a]=E(t,i);if(this.el=C.createElement(v,e),A.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(l=A.nextNode())&&c.length<u;){if(1===l.nodeType){if(l.hasAttributes()){const t=[];for(const i of l.getAttributeNames())if(i.endsWith("$lit$")||i.startsWith(o$3)){const s=a[d++];if(t.push(i),void 0!==s){const t=l.getAttribute(s.toLowerCase()+"$lit$").split(o$3),i=/([.?@])?(.*)/.exec(s);c.push({type:1,index:h,name:i[2],strings:t,ctor:"."===i[1]?M:"?"===i[1]?k:"@"===i[1]?H:S});}else c.push({type:6,index:h});}for(const i of t)l.removeAttribute(i);}if($.test(l.tagName)){const t=l.textContent.split(o$3),i=t.length-1;if(i>0){l.textContent=s$5?s$5.emptyScript:"";for(let s=0;s<i;s++)l.append(t[s],r$1()),A.nextNode(),c.push({type:2,index:++h});l.append(t[i],r$1());}}}else if(8===l.nodeType)if(l.data===n$5)c.push({type:2,index:h});else {let t=-1;for(;-1!==(t=l.data.indexOf(o$3,t+1));)c.push({type:7,index:h}),t+=o$3.length-1;}h++;}}static createElement(t,i){const s=h$4.createElement("template");return s.innerHTML=t,s}}function P(t,i,s=t,e){var o,n,l,h;if(i===x)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const u=d(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==u&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===u?r=void 0:(r=new u(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=P(t,r._$AS(t,i.values),r,e)),i}class V{constructor(t,i){this.u=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}v(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:h$4).importNode(s,!0);A.currentNode=o;let n=A.nextNode(),l=0,r=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new N(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new I(n,this,t)),this.u.push(i),d=e[++r];}l!==(null==d?void 0:d.index)&&(n=A.nextNode(),l++);}return o}p(t){let i=0;for(const s of this.u)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class N{constructor(t,i,s,e){var o;this.type=2,this._$AH=b,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cm=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cm}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=P(this,t,i),d(t)?t===b||null==t||""===t?(this._$AH!==b&&this._$AR(),this._$AH=b):t!==this._$AH&&t!==x&&this.g(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):c$2(t)?this.k(t):this.g(t);}O(t,i=this._$AB){return this._$AA.parentNode.insertBefore(t,i)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}g(t){this._$AH!==b&&d(this._$AH)?this._$AA.nextSibling.data=t:this.T(h$4.createTextNode(t)),this._$AH=t;}$(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=C.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.p(s);else {const t=new V(o,this),i=t.v(this.options);t.p(s),this.T(i),this._$AH=t;}}_$AC(t){let i=T.get(t.strings);return void 0===i&&T.set(t.strings,i=new C(t)),i}k(t){u(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new N(this.O(r$1()),this.O(r$1()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cm=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class S{constructor(t,i,s,e,o){this.type=1,this._$AH=b,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=b;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=P(this,t,i,0),n=!d(t)||t!==this._$AH&&t!==x,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=P(this,e[s+l],i,l),h===x&&(h=this._$AH[l]),n||(n=!d(h)||h!==this._$AH[l]),h===b?t=b:t!==b&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===b?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class M extends S{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===b?void 0:t;}}const R=s$5?s$5.emptyScript:"";class k extends S{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==b?this.element.setAttribute(this.name,R):this.element.removeAttribute(this.name);}}class H extends S{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=P(this,t,i,0))&&void 0!==s?s:b)===x)return;const e=this._$AH,o=t===b&&e!==b||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==b&&(e===b||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class I{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){P(this,t);}}const z=i$5.litHtmlPolyfillSupport;null==z||z(C,N),(null!==(t$2=i$5.litHtmlVersions)&&void 0!==t$2?t$2:i$5.litHtmlVersions=[]).push("2.4.0");const Z=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new N(i.insertBefore(r$1(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
+    var t$1;const i$6=window,s$5=i$6.trustedTypes,e$5=s$5?s$5.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$3="$lit$",n$6=`lit$${(Math.random()+"").slice(9)}$`,l$3="?"+n$6,h$4=`<${l$3}>`,r$1=document,u=()=>r$1.createComment(""),d=t=>null===t||"object"!=typeof t&&"function"!=typeof t,c$2=Array.isArray,v=t=>c$2(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),a$1="[ \t\n\f\r]",f=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m$1=/>/g,p=RegExp(`>|${a$1}(?:([^\\s"'>=/]+)(${a$1}*=${a$1}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,w=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),x=w(1),T=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),E=new WeakMap,C=r$1.createTreeWalker(r$1,129,null,!1);function P(t,i){if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==e$5?e$5.createHTML(i):i}const V=(t,i)=>{const s=t.length-1,e=[];let l,r=2===i?"<svg>":"",u=f;for(let i=0;i<s;i++){const s=t[i];let d,c,v=-1,a=0;for(;a<s.length&&(u.lastIndex=a,c=u.exec(s),null!==c);)a=u.lastIndex,u===f?"!--"===c[1]?u=_:void 0!==c[1]?u=m$1:void 0!==c[2]?(y.test(c[2])&&(l=RegExp("</"+c[2],"g")),u=p):void 0!==c[3]&&(u=p):u===p?">"===c[0]?(u=null!=l?l:f,v=-1):void 0===c[1]?v=-2:(v=u.lastIndex-c[2].length,d=c[1],u=void 0===c[3]?p:'"'===c[3]?$:g):u===$||u===g?u=p:u===_||u===m$1?u=f:(u=p,l=void 0);const w=u===p&&t[i+1].startsWith("/>")?" ":"";r+=u===f?s+h$4:v>=0?(e.push(d),s.slice(0,v)+o$3+s.slice(v)+n$6+w):s+n$6+(-2===v?(e.push(void 0),i):w);}return [P(t,r+(t[s]||"<?>")+(2===i?"</svg>":"")),e]};class N{constructor({strings:t,_$litType$:i},e){let h;this.parts=[];let r=0,d=0;const c=t.length-1,v=this.parts,[a,f]=V(t,i);if(this.el=N.createElement(a,e),C.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(h=C.nextNode())&&v.length<c;){if(1===h.nodeType){if(h.hasAttributes()){const t=[];for(const i of h.getAttributeNames())if(i.endsWith(o$3)||i.startsWith(n$6)){const s=f[d++];if(t.push(i),void 0!==s){const t=h.getAttribute(s.toLowerCase()+o$3).split(n$6),i=/([.?@])?(.*)/.exec(s);v.push({type:1,index:r,name:i[2],strings:t,ctor:"."===i[1]?H:"?"===i[1]?L:"@"===i[1]?z:k});}else v.push({type:6,index:r});}for(const i of t)h.removeAttribute(i);}if(y.test(h.tagName)){const t=h.textContent.split(n$6),i=t.length-1;if(i>0){h.textContent=s$5?s$5.emptyScript:"";for(let s=0;s<i;s++)h.append(t[s],u()),C.nextNode(),v.push({type:2,index:++r});h.append(t[i],u());}}}else if(8===h.nodeType)if(h.data===l$3)v.push({type:2,index:r});else {let t=-1;for(;-1!==(t=h.data.indexOf(n$6,t+1));)v.push({type:7,index:r}),t+=n$6.length-1;}r++;}}static createElement(t,i){const s=r$1.createElement("template");return s.innerHTML=t,s}}function S(t,i,s=t,e){var o,n,l,h;if(i===T)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const u=d(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==u&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===u?r=void 0:(r=new u(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=S(t,r._$AS(t,i.values),r,e)),i}class M{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:r$1).importNode(s,!0);C.currentNode=o;let n=C.nextNode(),l=0,h=0,u=e[0];for(;void 0!==u;){if(l===u.index){let i;2===u.type?i=new R(n,n.nextSibling,this,t):1===u.type?i=new u.ctor(n,u.name,u.strings,this,t):6===u.type&&(i=new Z(n,this,t)),this._$AV.push(i),u=e[++h];}l!==(null==u?void 0:u.index)&&(n=C.nextNode(),l++);}return C.currentNode=r$1,o}v(t){let i=0;for(const s of this._$AV)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class R{constructor(t,i,s,e){var o;this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cp=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cp}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===(null==t?void 0:t.nodeType)&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=S(this,t,i),d(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==T&&this._(t):void 0!==t._$litType$?this.g(t):void 0!==t.nodeType?this.$(t):v(t)?this.T(t):this._(t);}k(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}$(t){this._$AH!==t&&(this._$AR(),this._$AH=this.k(t));}_(t){this._$AH!==A&&d(this._$AH)?this._$AA.nextSibling.data=t:this.$(r$1.createTextNode(t)),this._$AH=t;}g(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=N.createElement(P(e.h,e.h[0]),this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.v(s);else {const t=new M(o,this),i=t.u(this.options);t.v(s),this.$(i),this._$AH=t;}}_$AC(t){let i=E.get(t.strings);return void 0===i&&E.set(t.strings,i=new N(t)),i}T(t){c$2(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new R(this.k(u()),this.k(u()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cp=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class k{constructor(t,i,s,e,o){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=S(this,t,i,0),n=!d(t)||t!==this._$AH&&t!==T,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=S(this,e[s+l],i,l),h===T&&(h=this._$AH[l]),n||(n=!d(h)||h!==this._$AH[l]),h===A?t=A:t!==A&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class H extends k{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}const I=s$5?s$5.emptyScript:"";class L extends k{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==A?this.element.setAttribute(this.name,I):this.element.removeAttribute(this.name);}}class z extends k{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=S(this,t,i,0))&&void 0!==s?s:A)===T)return;const e=this._$AH,o=t===A&&e!==A||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==A&&(e===A||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class Z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){S(this,t);}}const B=i$6.litHtmlPolyfillSupport;null==B||B(N,R),(null!==(t$1=i$6.litHtmlVersions)&&void 0!==t$1?t$1:i$6.litHtmlVersions=[]).push("2.8.0");const D=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new R(i.insertBefore(u(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */var l$2,o$2;let s$4 = class s extends d$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=Z(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return x}};s$4.finalized=!0,s$4._$litElement$=!0,null===(l$2=globalThis.litElementHydrateSupport)||void 0===l$2||l$2.call(globalThis,{LitElement:s$4});const n$4=globalThis.litElementPolyfillSupport;null==n$4||n$4({LitElement:s$4});(null!==(o$2=globalThis.litElementVersions)&&void 0!==o$2?o$2:globalThis.litElementVersions=[]).push("3.2.2");
+     */var l$2,o$2;let s$4 = class s extends u$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=D(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return T}};s$4.finalized=!0,s$4._$litElement$=!0,null===(l$2=globalThis.litElementHydrateSupport)||void 0===l$2||l$2.call(globalThis,{LitElement:s$4});const n$5=globalThis.litElementPolyfillSupport;null==n$5||n$5({LitElement:s$4});(null!==(o$2=globalThis.litElementVersions)&&void 0!==o$2?o$2:globalThis.litElementVersions=[]).push("3.3.3");
 
     /**
      * @license
@@ -70,7 +72,7 @@
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    const i$4=(i,e)=>"method"===e.kind&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(n){n.createProperty(e.key,i);}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){"function"==typeof e.initializer&&(this[e.key]=e.initializer.call(this));},finisher(n){n.createProperty(e.key,i);}};function e$3(e){return (n,t)=>void 0!==t?((i,e,n)=>{e.constructor.createProperty(n,i);})(e,n,t):i$4(e,n)}
+    const i$5=(i,e)=>"method"===e.kind&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(n){n.createProperty(e.key,i);}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){"function"==typeof e.initializer&&(this[e.key]=e.initializer.call(this));},finisher(n){n.createProperty(e.key,i);}},e$3=(i,e,n)=>{e.constructor.createProperty(n,i);};function n$4(n){return (t,o)=>void 0!==o?e$3(n,t,o):i$5(n,t)}
 
     /**
      * @license
@@ -318,7 +320,7 @@
             static get styles() {
                 return [
                     asArray(super.styles),
-                    i$6 `
+                    i$7 `
                     :host {
                         --checkbox-size: 16px;
                     }
@@ -378,11 +380,11 @@
                 ];
             }
             renderCheckable(type, input, label) {
-                return y `
+                return x `
                 <label class="checkable-container">
                     ${input}
                     <span class="checkable-symbol" role=${type}></span>
-                    ${label && label ? y `<span class="checkable-text">${label}</span>` : undefined}
+                    ${label && label ? x `<span class="checkable-text">${label}</span>` : undefined}
                 </label>
             `;
             }
@@ -394,7 +396,7 @@
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */const i$3={INITIAL:0,PENDING:1,COMPLETE:2,ERROR:3},s$3=Symbol();let h$3 = class h{constructor(t,i,s){this.i=0,this.status=0,this.autoRun=!0,this.o=t,this.o.addController(this);const h="object"==typeof i?i:{task:i,args:s};this.t=h.task,this.h=h.args,this.l=h.onComplete,this.u=h.onError,void 0!==h.autoRun&&(this.autoRun=h.autoRun),this.taskComplete=new Promise(((t,i)=>{this.v=t,this._=i;}));}hostUpdated(){this.performTask();}async performTask(){var t;const i=null===(t=this.h)||void 0===t?void 0:t.call(this);this.shouldRun(i)&&this.run(i);}shouldRun(t){return this.autoRun&&this.m(t)}async run(t){var i,h,r;let e,o;null!=t||(t=null===(i=this.h)||void 0===i?void 0:i.call(this)),2!==this.status&&3!==this.status||(this.taskComplete=new Promise(((t,i)=>{this.v=t,this._=i;}))),this.status=1,this.o.requestUpdate();const n=++this.i;try{e=await this.t(t);}catch(t){o=t;}if(this.i===n){if(e===s$3)this.status=0;else {if(void 0===o){try{null===(h=this.l)||void 0===h||h.call(this,e);}catch{}this.status=2,this.v(e);}else {try{null===(r=this.u)||void 0===r||r.call(this,o);}catch{}this.status=3,this._(o);}this.T=e,this.k=o;}this.o.requestUpdate();}}get value(){return this.T}get error(){return this.k}render(t){var i,s,h,r;switch(this.status){case 0:return null===(i=t.initial)||void 0===i?void 0:i.call(t);case 1:return null===(s=t.pending)||void 0===s?void 0:s.call(t);case 2:return null===(h=t.complete)||void 0===h?void 0:h.call(t,this.value);case 3:return null===(r=t.error)||void 0===r?void 0:r.call(t,this.error);default:this.status;}}m(i){const s=this.p;return this.p=i,Array.isArray(i)&&Array.isArray(s)?i.length===s.length&&i.some(((i,h)=>a$1(i,s[h]))):i!==s}};
+     */const i$4={INITIAL:0,PENDING:1,COMPLETE:2,ERROR:3},s$3=Symbol();let h$3 = class h{constructor(t,i,s){this.i=0,this.status=0,this.autoRun=!0,this.t=t,this.t.addController(this);const h="object"==typeof i?i:{task:i,args:s};this.o=h.task,this.h=h.args,this.l=h.onComplete,this.u=h.onError,void 0!==h.autoRun&&(this.autoRun=h.autoRun);}get taskComplete(){return this.v||(1===this.status?this.v=new Promise(((t,i)=>{this.m=t,this._=i;})):3===this.status?this.v=Promise.reject(this.k):this.v=Promise.resolve(this.p)),this.v}hostUpdated(){this.performTask();}async performTask(){var t;const i=null===(t=this.h)||void 0===t?void 0:t.call(this);this.shouldRun(i)&&await this.run(i);}shouldRun(t){return this.autoRun&&this.T(t)}async run(t){var i,h,r,e,o;let l,n;null!=t||(t=null===(i=this.h)||void 0===i?void 0:i.call(this)),1!==this.status&&(this.v=void 0,this.m=void 0,this._=void 0),this.status=1,queueMicrotask((()=>this.t.requestUpdate()));const a=++this.i;try{l=await this.o(t);}catch(t){n=t;}if(this.i===a){if(l===s$3)this.status=0;else {if(void 0===n){try{null===(h=this.l)||void 0===h||h.call(this,l);}catch{}this.status=2,null===(r=this.m)||void 0===r||r.call(this,l);}else {try{null===(e=this.u)||void 0===e||e.call(this,n);}catch{}this.status=3,null===(o=this._)||void 0===o||o.call(this,n);}this.p=l,this.k=n;}this.t.requestUpdate();}}get value(){return this.p}get error(){return this.k}render(t){var i,s,h,r;switch(this.status){case 0:return null===(i=t.initial)||void 0===i?void 0:i.call(t);case 1:return null===(s=t.pending)||void 0===s?void 0:s.call(t);case 2:return null===(h=t.complete)||void 0===h?void 0:h.call(t,this.value);case 3:return null===(r=t.error)||void 0===r?void 0:r.call(t,this.error);default:this.status;}}T(i){const s=this.g;return this.g=i,Array.isArray(i)&&Array.isArray(s)?i.length===s.length&&i.some(((i,h)=>a$2(i,s[h]))):i!==s}};
 
     class StreamDeckClient {
         constructor() {
@@ -587,18 +589,18 @@
             }
         }
         __decorate([
-            e$3(),
+            n$4(),
             __metadata("design:type", String)
         ], DataSourced.prototype, "dataSource", void 0);
         __decorate([
-            e$3({
+            n$4({
                 attribute: 'hot-reload',
                 type: Boolean
             }),
             __metadata("design:type", Object)
         ], DataSourced.prototype, "hotReload", void 0);
         __decorate([
-            e$3({
+            n$4({
                 attribute: 'loading',
                 hasChanged: localizedMessagePropertyOptions.hasChanged,
                 converter: localizedMessagePropertyOptions.converter
@@ -612,7 +614,7 @@
      * @license
      * Copyright 2020 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */const t$1=o=>null===o||"object"!=typeof o&&"function"!=typeof o,e$2=o=>void 0===o.strings,f={},s$2=(o,l=f)=>o._$AH=l;
+     */const i$3=o=>null===o||"object"!=typeof o&&"function"!=typeof o,e$2=o=>void 0===o.strings,s$2={},a=(o,l=s$2)=>o._$AH=l;
 
     /**
      * @license
@@ -631,14 +633,14 @@
      * @license
      * Copyright 2020 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */const e=()=>new o;class o{}const h$1=new WeakMap,n$1=e$1(class extends c$1{render(t){return b}update(t,[s]){var e;const o=s!==this.Y;return o&&void 0!==this.Y&&this.rt(void 0),(o||this.lt!==this.ct)&&(this.Y=s,this.dt=null===(e=t.options)||void 0===e?void 0:e.host,this.rt(this.ct=t.element)),b}rt(i){var t;if("function"==typeof this.Y){const s=null!==(t=this.dt)&&void 0!==t?t:globalThis;let e=h$1.get(s);void 0===e&&(e=new WeakMap,h$1.set(s,e)),void 0!==e.get(this.Y)&&this.Y.call(this.dt,void 0),e.set(this.Y,i),void 0!==i&&this.Y.call(this.dt,i);}else this.Y.value=i;}get lt(){var i,t,s;return "function"==typeof this.Y?null===(t=h$1.get(null!==(i=this.dt)&&void 0!==i?i:globalThis))||void 0===t?void 0:t.get(this.Y):null===(s=this.Y)||void 0===s?void 0:s.value}disconnected(){this.lt===this.ct&&this.rt(void 0);}reconnected(){this.rt(this.ct);}});
+     */const e=()=>new o;class o{}const h$1=new WeakMap,n$1=e$1(class extends c$1{render(t){return A}update(t,[s]){var e;const o=s!==this.G;return o&&void 0!==this.G&&this.ot(void 0),(o||this.rt!==this.lt)&&(this.G=s,this.dt=null===(e=t.options)||void 0===e?void 0:e.host,this.ot(this.lt=t.element)),A}ot(i){var t;if("function"==typeof this.G){const s=null!==(t=this.dt)&&void 0!==t?t:globalThis;let e=h$1.get(s);void 0===e&&(e=new WeakMap,h$1.set(s,e)),void 0!==e.get(this.G)&&this.G.call(this.dt,void 0),e.set(this.G,i),void 0!==i&&this.G.call(this.dt,i);}else this.G.value=i;}get rt(){var i,t,s;return "function"==typeof this.G?null===(t=h$1.get(null!==(i=this.dt)&&void 0!==i?i:globalThis))||void 0===t?void 0:t.get(this.G):null===(s=this.G)||void 0===s?void 0:s.value}disconnected(){this.rt===this.lt&&this.ot(void 0);}reconnected(){this.ot(this.lt);}});
 
     const Delegate = (superClass) => {
         class Delegate extends superClass {
             static get styles() {
                 return [
                     ...asArray(super.styles),
-                    i$6 `
+                    i$7 `
                     .container {
                         width: var(--input-width);
                     }
@@ -672,7 +674,7 @@
             renderDelegate(getDisplayValue = (value) => value) {
                 var _a;
                 const value = this.value !== undefined ? this.value : this.defaultValue;
-                return y `
+                return x `
                 <div class="flex container">
                     <label class="flex-grow" aria-disabled=${this.disabled} @click=${() => !this.disabled && this.invoked && this.invoked()} .title=${(value === null || value === void 0 ? void 0 : value.toString()) || ''}>
                         ${getDisplayValue(value)}
@@ -685,7 +687,7 @@
             }
         }
         __decorate([
-            e$3(localizedMessagePropertyOptions),
+            n$4(localizedMessagePropertyOptions),
             __metadata("design:type", LocalizedMessage)
         ], Delegate.prototype, "label", void 0);
         return Delegate;
@@ -707,7 +709,7 @@
             }
         }
         __decorate([
-            e$3({ attribute: 'value-type' }),
+            n$4({ attribute: 'value-type' }),
             __metadata("design:type", Object)
         ], DynamicValueType.prototype, "valueType", void 0);
         return DynamicValueType;
@@ -755,7 +757,7 @@
             static get styles() {
                 return [
                     asArray(super.styles),
-                    i$6 `
+                    i$7 `
                     .gridded-container {
                         display: flex;
                         flex-wrap: wrap;
@@ -806,17 +808,17 @@
                 if (items.length === 0) {
                     return undefined;
                 }
-                return y `<div class="gridded-container">${items.map((item) => y `<div class="gridded-item gridded-col-${this.columns}">${item}</div>`)}</div>`;
+                return x `<div class="gridded-container">${items.map((item) => x `<div class="gridded-item gridded-col-${this.columns}">${item}</div>`)}</div>`;
             }
         }
         __decorate([
-            e$3({ type: Number }),
+            n$4({ type: Number }),
             __metadata("design:type", Object)
         ], Gridded.prototype, "columns", void 0);
         return Gridded;
     };
 
-    const commonStyle = i$6 `
+    const commonStyle = i$7 `
     .flex {
         align-items: stretch;
         display: flex;
@@ -835,7 +837,7 @@
     }
 `;
 
-    const hostStyle = i$6 `
+    const hostStyle = i$7 `
     :host {
         /* Box model */
         --spacer: 4px;
@@ -871,7 +873,7 @@
                     asArray(super.styles),
                     hostStyle,
                     commonStyle,
-                    i$6 `
+                    i$7 `
                     button,
                     input,
                     select,
@@ -894,18 +896,18 @@
             }
         }
         __decorate([
-            e$3({
+            n$4({
                 reflect: true,
                 type: Boolean
             }),
             __metadata("design:type", Object)
         ], Input.prototype, "disabled", void 0);
         __decorate([
-            e$3({ attribute: false }),
+            n$4({ attribute: false }),
             __metadata("design:type", Object)
         ], Input.prototype, "value", void 0);
         __decorate([
-            e$3({ attribute: 'default' }),
+            n$4({ attribute: 'default' }),
             __metadata("design:type", Object)
         ], Input.prototype, "defaultValue", void 0);
         return Input;
@@ -991,18 +993,18 @@
             }
         }
         __decorate([
-            e$3({
+            n$4({
                 attribute: 'global',
                 type: Boolean
             }),
             __metadata("design:type", Object)
         ], Persisted.prototype, "isGlobal", void 0);
         __decorate([
-            e$3(),
+            n$4(),
             __metadata("design:type", String)
         ], Persisted.prototype, "setting", void 0);
         __decorate([
-            e$3({ attribute: false }),
+            n$4({ attribute: false }),
             __metadata("design:type", Object),
             __metadata("design:paramtypes", [Object])
         ], Persisted.prototype, "value", null);
@@ -1014,7 +1016,7 @@
             return [
                 ...super.styles,
                 hostStyle,
-                i$6 `
+                i$7 `
                 button {
                     background-color: var(--window-bg-color);
                     border: 1px solid #969696;
@@ -1040,7 +1042,7 @@
             ];
         }
         render() {
-            return y `
+            return x `
             <button .disabled=${this.disabled} .value=${this.value || ''}>
                 <slot></slot>
             </button>
@@ -1055,7 +1057,7 @@
      * @license
      * Copyright 2018 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */const l=l=>null!=l?l:b;
+     */const l=l=>null!=l?l:A;
 
     class FilteredMutationController {
         constructor(host, nodeNames) {
@@ -1111,7 +1113,7 @@
         static get styles() {
             return [
                 ...super.styles,
-                i$6 `
+                i$7 `
                 input {
                     background-color: var(--input-bg-color);
                     padding: calc(var(--spacer) + 1px) var(--spacer);
@@ -1149,7 +1151,7 @@
         }
         render() {
             var _a;
-            return y `
+            return x `
             <input
                 ${n$1(this.focusElement)}
                 type=${this.type}
@@ -1166,19 +1168,19 @@
         }
     };
     __decorate([
-        e$3(),
+        n$4(),
         __metadata("design:type", String)
     ], Calendar.prototype, "max", void 0);
     __decorate([
-        e$3(),
+        n$4(),
         __metadata("design:type", String)
     ], Calendar.prototype, "min", void 0);
     __decorate([
-        e$3({ type: Number }),
+        n$4({ type: Number }),
         __metadata("design:type", Number)
     ], Calendar.prototype, "step", void 0);
     __decorate([
-        e$3(),
+        n$4(),
         __metadata("design:type", String)
     ], Calendar.prototype, "type", void 0);
     Calendar = __decorate([
@@ -1187,7 +1189,7 @@
 
     let Checkbox = class Checkbox extends Persisted(Focusable(Checkable(Input(s$4)))) {
         render() {
-            return this.renderCheckable('checkbox', y `<input
+            return this.renderCheckable('checkbox', x `<input
                 ${n$1(this.focusElement)}
                 type="checkbox"
                 .checked=${this.value || this.defaultValue || false}
@@ -1197,7 +1199,7 @@
         }
     };
     __decorate([
-        e$3(localizedMessagePropertyOptions),
+        n$4(localizedMessagePropertyOptions),
         __metadata("design:type", LocalizedMessage)
     ], Checkbox.prototype, "label", void 0);
     Checkbox = __decorate([
@@ -1208,7 +1210,7 @@
         static get styles() {
             return [
                 ...super.styles,
-                i$6 `
+                i$7 `
                 .loading {
                     margin: 0;
                     padding: calc(var(--spacer) * 1.5) 0;
@@ -1219,8 +1221,8 @@
         }
         render() {
             return this.items.render({
-                pending: () => y `<p class="loading">${this.loadingText}</p>`,
-                complete: () => this.renderGrid(this.renderDataSource((item) => this.renderCheckable('checkbox', y `
+                pending: () => x `<p class="loading">${this.loadingText}</p>`,
+                complete: () => this.renderGrid(this.renderDataSource((item) => this.renderCheckable('checkbox', x `
                                 <input
                                     type="checkbox"
                                     .checked=${(this.value && this.value.findIndex((v) => v == item.value) > -1) || false}
@@ -1254,7 +1256,7 @@
      * @license
      * Copyright 2021 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */const i$1=e$1(class extends i$2{constructor(){super(...arguments),this.key=b;}render(r,t){return this.key=r,t}update(r,[t,e]){return t!==this.key&&(s$2(r),this.key=t),e}});
+     */const i$1=e$1(class extends i$2{constructor(){super(...arguments),this.key=A;}render(r,t){return this.key=r,t}update(r,[t,e]){return t!==this.key&&(a(r),this.key=t),e}});
 
     function getByPath(obj, path) {
         console.log("getByPath: path: " + path + ", from obj: ", obj);
@@ -1309,7 +1311,7 @@
         static get styles() {
             return [
                 ...super.styles,
-                i$6 `
+                i$7 `
                 .loading {
                     margin: 0;
                     padding: calc(var(--spacer) * 1.5) 0;
@@ -1339,18 +1341,22 @@
         }
         render() {
             return this.items.render({
-                pending: () => y `<p class="loading">${this.loadingText}</p>`,
-                complete: () => this.renderGrid(this.renderDataSource((item) => this.renderCheckable('checkbox', i$1(item.groups, y `
+                pending: () => x `<p class="loading">${this.loadingText}</p>`,
+                complete: () => this.renderGrid(this.renderDataSource((item) => {
+                    console.log("rendering item: ", item);
+                    return this.renderCheckable('checkbox', i$1(item.groups, x `
                                     <input
                                         type="checkbox"
-                                        data-groups=${item.groups || "."}
+                                        .data-groups=${item.groups ? item.groups : "."}
                                         .checked="${this._get_is_checked(item)}"
                                         .disabled=${this.disabled || item.disabled || false}
                                         .value=${item.value}
                                         @change=${this.handleChange}
-                                />`), item.label), (group, children) => {
+                                />`), item.label);
+                }, (group, children) => {
+                    console.log("rendering group: ", group, " with children ", children);
                     var _a;
-                    return y `${((_a = group.label) === null || _a === void 0 ? void 0 : _a.toString()) || ''}<hr/>${children.filter((child) => this._placeInGroup(group, child))}</div><br/>`;
+                    return x `${((_a = group.label) === null || _a === void 0 ? void 0 : _a.toString()) || ''}<hr/>${children.filter((child) => this._placeInGroup(group, child))}</div><br/>`;
                 }))
             });
         }
@@ -1383,7 +1389,7 @@
         static get styles() {
             return [
                 ...super.styles,
-                i$6 `
+                i$7 `
                 input {
                     background-color: var(--input-bg-color);
                     height: var(--input-height);
@@ -1396,7 +1402,7 @@
             ];
         }
         render() {
-            return y `
+            return x `
             <input
                 type="color"
                 ${n$1(this.focusElement)}
@@ -1437,11 +1443,11 @@
         }
     };
     __decorate([
-        e$3({ attribute: 'format-type' }),
+        n$4({ attribute: 'format-type' }),
         __metadata("design:type", Object)
     ], DelegateElement.prototype, "formatType", void 0);
     __decorate([
-        e$3(),
+        n$4(),
         __metadata("design:type", String)
     ], DelegateElement.prototype, "invoke", void 0);
     DelegateElement = __decorate([
@@ -1452,7 +1458,7 @@
         static get styles() {
             return [
                 ...super.styles,
-                i$6 `
+                i$7 `
                 input[type='file'] {
                     display: none;
                 }
@@ -1460,7 +1466,7 @@
             ];
         }
         render() {
-            return y `
+            return x `
             ${super.renderDelegate((path) => getFileName((path === null || path === void 0 ? void 0 : path.toString()) || ''))}
             <input
                 ${n$1(this.focusElement)}
@@ -1478,7 +1484,7 @@
         }
     };
     __decorate([
-        e$3(),
+        n$4(),
         __metadata("design:type", String)
     ], File.prototype, "accept", void 0);
     File = __decorate([
@@ -1487,11 +1493,11 @@
 
     let i18nElement = class i18nElement extends s$4 {
         render() {
-            return this.key ? y `${i18n.getMessage(this.key)}` : undefined;
+            return this.key ? x `${i18n.getMessage(this.key)}` : undefined;
         }
     };
     __decorate([
-        e$3(),
+        n$4(),
         __metadata("design:type", String)
     ], i18nElement.prototype, "key", void 0);
     i18nElement = __decorate([
@@ -1509,7 +1515,7 @@
             return [
                 ...super.styles,
                 hostStyle,
-                i$6 `
+                i$7 `
                 input {
                     background-color: var(--input-bg-color);
                     padding: calc(var(--spacer) + 3px) var(--spacer);
@@ -1536,7 +1542,7 @@
         }
         render() {
             var _a;
-            return y `
+            return x `
             <input
                 ${n$1(this.focusElement)}
                 pattern=${l(this.pattern)}
@@ -1552,22 +1558,22 @@
         }
     };
     __decorate([
-        e$3({
+        n$4({
             attribute: 'maxlength',
             type: Number
         }),
         __metadata("design:type", Number)
     ], Textfield.prototype, "maxLength", void 0);
     __decorate([
-        e$3(),
+        n$4(),
         __metadata("design:type", String)
     ], Textfield.prototype, "pattern", void 0);
     __decorate([
-        e$3(localizedMessagePropertyOptions),
+        n$4(localizedMessagePropertyOptions),
         __metadata("design:type", LocalizedMessage)
     ], Textfield.prototype, "placeholder", void 0);
     __decorate([
-        e$3({ type: Boolean }),
+        n$4({ type: Boolean }),
         __metadata("design:type", Object)
     ], Textfield.prototype, "required", void 0);
     Textfield = __decorate([
@@ -1588,7 +1594,7 @@
         static get styles() {
             return [
                 ...super.styles,
-                i$6 `
+                i$7 `
                 .loading {
                     margin: 0;
                     padding: calc(var(--spacer) * 1.5) 0;
@@ -1599,8 +1605,8 @@
         }
         render() {
             return this.items.render({
-                pending: () => y `<p class="loading">${this.loadingText}</p>`,
-                complete: () => this.renderGrid(this.renderDataSource((item) => this.renderCheckable('radio', y `
+                pending: () => x `<p class="loading">${this.loadingText}</p>`,
+                complete: () => this.renderGrid(this.renderDataSource((item) => this.renderCheckable('radio', x `
                                 <input
                                     type="radio"
                                     name="_"
@@ -1626,7 +1632,7 @@
         static get styles() {
             return [
                 ...super.styles,
-                i$6 `
+                i$7 `
                 input {
                     -webkit-appearance: none;
                     margin: 0;
@@ -1694,7 +1700,7 @@
         render() {
             var _a, _b;
             const value = ((_a = this.value) === null || _a === void 0 ? void 0 : _a.toString()) || ((_b = this.defaultValue) === null || _b === void 0 ? void 0 : _b.toString()) || '';
-            const input = y `
+            const input = x `
             <input
                 ${n$1(this.focusElement)}
                 type="range"
@@ -1708,7 +1714,7 @@
             />
         `;
             if (this.showLabels) {
-                return y `<div class="container">
+                return x `<div class="container">
                 <div aria-disabled=${this.disabled} role="button" @click=${() => !this.disabled && this.min !== undefined && (this.value = this.min)}><slot name="min">${this.min}</slot></div>
                 <div>${input}</div>
                 <div aria-disabled=${this.disabled} role="button" @click=${() => !this.disabled && this.max !== undefined && (this.value = this.max)}><slot name="max">${this.max}</slot></div>
@@ -1720,22 +1726,22 @@
         }
     };
     __decorate([
-        e$3({ type: Number }),
+        n$4({ type: Number }),
         __metadata("design:type", Number)
     ], Range.prototype, "max", void 0);
     __decorate([
-        e$3({ type: Number }),
+        n$4({ type: Number }),
         __metadata("design:type", Number)
     ], Range.prototype, "min", void 0);
     __decorate([
-        e$3({
+        n$4({
             attribute: 'showlabels',
             type: Boolean
         }),
         __metadata("design:type", Object)
     ], Range.prototype, "showLabels", void 0);
     __decorate([
-        e$3({ type: Number }),
+        n$4({ type: Number }),
         __metadata("design:type", Number)
     ], Range.prototype, "step", void 0);
     Range = __decorate([
@@ -1744,7 +1750,7 @@
 
     let SdpiItem = class SdpiItem extends s$4 {
         render() {
-            return y `
+            return x `
             <div class="container grid">
                 <div class="label"><label @click=${this.handleLabelClick}>${this.label ? this.label.toString() + ':' : undefined}</label></div>
                 <div class="content"><slot></slot></div>
@@ -1763,7 +1769,7 @@
     };
     SdpiItem.styles = [
         hostStyle,
-        i$6 `
+        i$7 `
             ::-webkit-scrollbar {
                 width: 5px;
             }
@@ -1800,7 +1806,7 @@
         `
     ];
     __decorate([
-        e$3(localizedMessagePropertyOptions),
+        n$4(localizedMessagePropertyOptions),
         __metadata("design:type", LocalizedMessage)
     ], SdpiItem.prototype, "label", void 0);
     SdpiItem = __decorate([
@@ -1812,13 +1818,13 @@
      * Copyright 2021 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
      */
-    class s{constructor(t){this.Y=t;}disconnect(){this.Y=void 0;}reconnect(t){this.Y=t;}deref(){return this.Y}}class i{constructor(){this.Z=void 0,this.q=void 0;}get(){return this.Z}pause(){var t;null!==(t=this.Z)&&void 0!==t||(this.Z=new Promise((t=>this.q=t)));}resume(){var t;null===(t=this.q)||void 0===t||t.call(this),this.Z=this.q=void 0;}}
+    class s{constructor(t){this.G=t;}disconnect(){this.G=void 0;}reconnect(t){this.G=t;}deref(){return this.G}}class i{constructor(){this.Y=void 0,this.Z=void 0;}get(){return this.Y}pause(){var t;null!==(t=this.Y)&&void 0!==t||(this.Y=new Promise((t=>this.Z=t)));}resume(){var t;null===(t=this.Z)||void 0===t||t.call(this),this.Y=this.Z=void 0;}}
 
     /**
      * @license
      * Copyright 2017 Google LLC
      * SPDX-License-Identifier: BSD-3-Clause
-     */const n=t=>!t$1(t)&&"function"==typeof t.then;class h extends c$1{constructor(){super(...arguments),this._$Cwt=1073741823,this._$Cyt=[],this._$CK=new s(this),this._$CX=new i;}render(...s){var i;return null!==(i=s.find((t=>!n(t))))&&void 0!==i?i:x}update(s,i){const r=this._$Cyt;let e=r.length;this._$Cyt=i;const o=this._$CK,h=this._$CX;this.isConnected||this.disconnected();for(let t=0;t<i.length&&!(t>this._$Cwt);t++){const s=i[t];if(!n(s))return this._$Cwt=t,s;t<e&&s===r[t]||(this._$Cwt=1073741823,e=0,Promise.resolve(s).then((async t=>{for(;h.get();)await h.get();const i=o.deref();if(void 0!==i){const r=i._$Cyt.indexOf(s);r>-1&&r<i._$Cwt&&(i._$Cwt=r,i.setValue(t));}})));}return x}disconnected(){this._$CK.disconnect(),this._$CX.pause();}reconnected(){this._$CK.reconnect(this),this._$CX.resume();}}const c=e$1(h);
+     */const n=t=>!i$3(t)&&"function"==typeof t.then,h=1073741823;class c extends c$1{constructor(){super(...arguments),this._$C_t=h,this._$Cwt=[],this._$Cq=new s(this),this._$CK=new i;}render(...s){var i;return null!==(i=s.find((t=>!n(t))))&&void 0!==i?i:T}update(s,i){const r=this._$Cwt;let e=r.length;this._$Cwt=i;const o=this._$Cq,c=this._$CK;this.isConnected||this.disconnected();for(let t=0;t<i.length&&!(t>this._$C_t);t++){const s=i[t];if(!n(s))return this._$C_t=t,s;t<e&&s===r[t]||(this._$C_t=h,e=0,Promise.resolve(s).then((async t=>{for(;c.get();)await c.get();const i=o.deref();if(void 0!==i){const r=i._$Cwt.indexOf(s);r>-1&&r<i._$C_t&&(i._$C_t=r,i.setValue(t));}})));}return T}disconnected(){this._$Cq.disconnect(),this._$CK.pause();}reconnected(){this._$Cq.reconnect(this),this._$CK.resume();}}const m=e$1(c);
 
     let Select = class Select extends Persisted(Focusable(DataSourced(DynamicValueType(Input(s$4))))) {
         constructor() {
@@ -1828,7 +1834,7 @@
         static get styles() {
             return [
                 ...super.styles,
-                i$6 `
+                i$7 `
                 select {
                     background-color: var(--input-bg-color);
                     padding: calc(var(--spacer) + 2px) 0;
@@ -1864,9 +1870,9 @@
         }
         render() {
             var _a, _b;
-            const disabled = this.disabled || this.items.status !== i$3.COMPLETE;
+            const disabled = this.disabled || this.items.status !== i$4.COMPLETE;
             const selectedValue = this.getSelectedValueFrom((_b = (_a = this.items) === null || _a === void 0 ? void 0 : _a.value) !== null && _b !== void 0 ? _b : []) || this.defaultValue;
-            const select = y `
+            const select = x `
             <select
                 ${n$1(this.focusElement)}
                 .disabled=${disabled}
@@ -1877,10 +1883,10 @@
         }}
             >
                 ${this.items.render({
-            pending: () => y `<option value="" disabled selected>${this.loadingText}</option>`,
-            complete: () => y `
-                        ${selectedValue === undefined ? c(this.getLabelOrPlaceholder()) : undefined}
-                        ${this.renderDataSource((item) => y `<option .disabled=${item.disabled || false} .value=${item.value} .selected=${item.value === selectedValue}>${item.label}</option>`, (group, children) => { var _a; return y `<optgroup .label=${((_a = group.label) === null || _a === void 0 ? void 0 : _a.toString()) || ''}>${children}</optgroup>`; })}
+            pending: () => x `<option value="" disabled selected>${this.loadingText}</option>`,
+            complete: () => x `
+                        ${selectedValue === undefined ? m(this.getLabelOrPlaceholder()) : undefined}
+                        ${this.renderDataSource((item) => x `<option .disabled=${item.disabled || false} .value=${item.value} .selected=${item.value === selectedValue}>${item.label}</option>`, (group, children) => { var _a; return x `<optgroup .label=${((_a = group.label) === null || _a === void 0 ? void 0 : _a.toString()) || ''}>${children}</optgroup>`; })}
                     `
         })}
             </select>
@@ -1888,7 +1894,7 @@
             if (!this.showRefresh || this.dataSource === undefined) {
                 return select;
             }
-            return y `
+            return x `
             <div class="flex">
                 <div class="flex-grow">${select}</div>
                 <div class="flex-shrink margin-left">
@@ -1903,11 +1909,11 @@
             if (this.getLabel) {
                 const label = await this.getLabel();
                 if (label !== undefined) {
-                    return y `<option value="" disabled selected>${label}</option>`;
+                    return x `<option value="" disabled selected>${label}</option>`;
                 }
             }
             if (this.placeholder) {
-                return y `<option value="" disabled hidden selected>${this.placeholder}</option>`;
+                return x `<option value="" disabled hidden selected>${this.placeholder}</option>`;
             }
             return undefined;
         }
@@ -1928,18 +1934,18 @@
         }
     };
     __decorate([
-        e$3({ attribute: 'label-setting' }),
+        n$4({ attribute: 'label-setting' }),
         __metadata("design:type", String)
     ], Select.prototype, "labelSetting", void 0);
     __decorate([
-        e$3({
+        n$4({
             attribute: 'show-refresh',
             type: Boolean
         }),
         __metadata("design:type", Object)
     ], Select.prototype, "showRefresh", void 0);
     __decorate([
-        e$3(localizedMessagePropertyOptions),
+        n$4(localizedMessagePropertyOptions),
         __metadata("design:type", LocalizedMessage)
     ], Select.prototype, "placeholder", void 0);
     Select = __decorate([
@@ -1957,7 +1963,7 @@
             return [
                 ...super.styles,
                 hostStyle,
-                i$6 `
+                i$7 `
                 textarea {
                     background-color: var(--input-bg-color);
                     padding: calc(var(--spacer) + 3px) var(--spacer);
@@ -1979,7 +1985,7 @@
             ];
         }
         render() {
-            return y `
+            return x `
             <textarea
                 ${n$1(this.focusElement)}
                 type="textarea"
@@ -1996,25 +2002,25 @@
         getLengthLabel() {
             var _a;
             if (this.showLength || this.maxLength) {
-                const maxLengthLabel = this.maxLength ? y `/${this.maxLength}` : undefined;
-                return y `<label class="length" for=${this.inputId}>${((_a = this.value) === null || _a === void 0 ? void 0 : _a.length) || 0}${maxLengthLabel}</label>`;
+                const maxLengthLabel = this.maxLength ? x `/${this.maxLength}` : undefined;
+                return x `<label class="length" for=${this.inputId}>${((_a = this.value) === null || _a === void 0 ? void 0 : _a.length) || 0}${maxLengthLabel}</label>`;
             }
             return undefined;
         }
     };
     __decorate([
-        e$3({
+        n$4({
             attribute: 'maxlength',
             type: Number
         }),
         __metadata("design:type", Number)
     ], Textarea.prototype, "maxLength", void 0);
     __decorate([
-        e$3({ type: Number }),
+        n$4({ type: Number }),
         __metadata("design:type", Object)
     ], Textarea.prototype, "rows", void 0);
     __decorate([
-        e$3({
+        n$4({
             attribute: 'showlength',
             type: Boolean
         }),
@@ -2042,7 +2048,7 @@
     window.SDPIComponents = SDPIComponents;
 
     const style = document.createElement('style');
-    style.innerHTML = i$6 `
+    style.innerHTML = i$7 `
     /* Styles added by sdpi library. */
     html,
     body {

@@ -1,0 +1,9 @@
+---
+- name: Build backend
+  hosts: host-win
+
+  tasks:
+    - name: Build backend
+      ansible.windows.win_shell: "{{ hostvars[inventory_hostname].devenv_path }} StreamDeckMonSwitchMKI.sln /Build 'ReleaseAndRun'"
+      args:
+        chdir: "{{ hostvars[inventory_hostname].plugin_home }}"

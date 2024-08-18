@@ -3,19 +3,12 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using WindowsDisplayAPI.Native;
-using WindowsDisplayAPI;
 using StreamDeckMonitorSwitch.ddcmon;
 using StreamDeckMonitorSwitch.dtos;
-using Newtonsoft.Json.Converters;
 using Svg;
-using System.Drawing.Imaging;
 using System.Drawing;
-using System.Threading;
 
 namespace StreamDeckMonitorSwitch
 {
@@ -23,10 +16,19 @@ namespace StreamDeckMonitorSwitch
     [PluginActionId("com.elgato.streamdeck.streamdeckmonswitch.monitorpluginaction")]
     public class MonitorPluginAction : KeypadBase
     {
-        public bool isChangingVCP { get; private set; }
+        public SvgDocument svgIcon { get; internal set; }
+
+        public bool IsChangingVCP { get; private set; }
         public PluginSettings Settings { get; private set; }
 
-        public SvgDocument svgIcon;
+        public string ContextId
+        {
+            get
+            {
+                return Connection.ContextId;
+            }
+        }
+
 
         public class PluginSettings
         {
@@ -42,9 +44,8 @@ namespace StreamDeckMonitorSwitch
             [JsonProperty("properties")]
             public Dictionary<string, List<string>> Properties { get; private set; } = new Dictionary<string, List<string>>();
 
-            [JsonProperty("values")]
+            [JsonProperty("values", DefaultValueHandling = DefaultValueHandling.Populate)]
             public Dictionary<string, Dictionary<string, int>> VCPActionsSettings { get; private set; } = new Dictionary<string, Dictionary<string, int>>();
-
         }
 
         public MonitorPluginAction(SDConnection connection, InitialPayload payload) : base(connection, payload)
@@ -55,6 +56,7 @@ namespace StreamDeckMonitorSwitch
                 );
 
             this.Settings = PluginSettings.CreateDefaultSettings();
+
             if (payload.Settings == null || payload.Settings.Count == 0)
             {
                 SaveSettings();
@@ -73,8 +75,8 @@ namespace StreamDeckMonitorSwitch
                 {
                     Logger.Instance.LogMessage(TracingLevel.WARN,
                         "Could not load persistent settings from object:\n "
-                        + payload.Settings.ToString(Formatting.Indented) 
-                        + "\n got error:\n" 
+                        + payload.Settings.ToString(Formatting.Indented)
+                        + "\n got error:\n"
                         + ex.ToString());
                 }
             }
@@ -100,13 +102,13 @@ namespace StreamDeckMonitorSwitch
 
         public override void KeyPressed(KeyPayload payload)
         {
-            if (!isChangingVCP && Settings.VCPActionsSettings.Count > 0 && Settings.VCPActionsSettings.All(vcpaction => vcpaction.Value.Count > 0))
+            if (!IsChangingVCP && Settings.VCPActionsSettings.Count > 0 && Settings.VCPActionsSettings.All(vcpaction => vcpaction.Value.Count > 0))
             {
-                isChangingVCP = true;
+                IsChangingVCP = true;
                 Logger.Instance.LogMessage(TracingLevel.INFO, "Key Pressed");
                 svgIcon.GetElementById("monitor_outline").Fill = new SvgColourServer(Color.Orange);
                 PushIcon();
-                
+
                 foreach (var action in Settings.VCPActionsSettings)
                 {
                     foreach (var vcpSetting in action.Value)
@@ -134,13 +136,13 @@ namespace StreamDeckMonitorSwitch
                         }
                         PushIcon();
                     }
-                    
+
                 }
             }
         }
 
         public override void KeyReleased(KeyPayload payload) {
-            isChangingVCP = false;
+            IsChangingVCP = false;
         }
 
         public override void OnTick() { }
@@ -153,7 +155,7 @@ namespace StreamDeckMonitorSwitch
             {
                 try
                 {
-                    var newSettings = payload.Settings.ToObject<PluginSettings>();
+                    var newSettings = payload.Settings.ToObject<PluginSettings>(new JsonSerializer());
                     var todo = new List<Action>();
 
 
@@ -168,26 +170,26 @@ namespace StreamDeckMonitorSwitch
 
                     Settings = newSettings;
 
-                    Logger.Instance.LogMessage(TracingLevel.DEBUG, 
-                        "New set settings:\n" 
+                    Logger.Instance.LogMessage(TracingLevel.DEBUG,
+                        "New set settings:\n"
                         + JObject.FromObject(Settings).ToString());
 
                     UpdateInspector();
                     todo.ForEach(action => action());
                 } catch (Exception ex)
                 {
-                    Logger.Instance.LogMessage(TracingLevel.WARN, 
+                    Logger.Instance.LogMessage(TracingLevel.WARN,
                         "::ReceivedSettings - Could not read settings from object:\n"
                         + payload.Settings.ToString(Formatting.Indented)
-                        + "\n with exception:'\n" 
+                        + "\n with exception:'\n"
                         + ex.ToString());
                 }
             }
-            
+
         }
 
         public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) {
-            Logger.Instance.LogMessage(TracingLevel.DEBUG, 
+            Logger.Instance.LogMessage(TracingLevel.DEBUG,
                 "::ReceivedGlobalSettings - not implemented ... skipping ");
         }
 
@@ -204,7 +206,7 @@ namespace StreamDeckMonitorSwitch
         {
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "Getting monitors ..");
 
-            var monitorsPayloadRaw = MonitorConfigurator.Monitors.Select(monitor => 
+            var monitorsPayloadRaw = MonitorConfigurator.Monitors.Select(monitor =>
                 new InspectorDataSourceItemDTO(monitor.model, monitor.model)
                 ).ToList<IInspectorDataSourceItemDTO>();
 
@@ -260,7 +262,7 @@ namespace StreamDeckMonitorSwitch
                             .Select(vcp =>
                                 new InspectorDataSourceItemGroupDTO(
                                     vcp.Key.codeName,
-                                    vcp.Value.Select(vcpValue => 
+                                    vcp.Value.Select(vcpValue =>
                                         new InspectorDataSourceItemDTO(vcpValue.ToString(), vcpValue.ToString())
                                         ).ToList<IInspectorDataSourceItemDTO>()
                                 )
@@ -291,14 +293,12 @@ namespace StreamDeckMonitorSwitch
             UpdateInspectorValues();
         }
 
-        
-
         private void Connection_OnSendToPlugin(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.SendToPlugin> e)
         {
             var payload = e.Event.Payload;
 
             Logger.Instance.LogMessage(TracingLevel.DEBUG,
-                "OnSendToPlugin Payload:\n" 
+                "OnSendToPlugin Payload:\n"
                 + JsonConvert.SerializeObject(payload));
 
             if (payload.ContainsKey("event"))
@@ -319,8 +319,8 @@ namespace StreamDeckMonitorSwitch
                         UpdateInspectorValues();
                         break;
                     default:
-                        Logger.Instance.LogMessage(TracingLevel.WARN, 
-                            "Got unknown settings:\n" 
+                        Logger.Instance.LogMessage(TracingLevel.WARN,
+                            "Got unknown settings:\n"
                             + JsonConvert.SerializeObject(payload));
                         break;
                 }

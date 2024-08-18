@@ -20,6 +20,8 @@ Resources:
 
 # Frontend
 
+Debug streamdeck at: http://localhost:23654/
+
 ## Custom build for sdpi-components
 
 git module from

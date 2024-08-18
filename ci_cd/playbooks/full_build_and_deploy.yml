@@ -1,4 +1,5 @@
 ---
+- import_playbook: build_backend.yml
 - import_playbook: build_frontend.yml
 - import_playbook: compose_release.yml
 - import_playbook: deploy_plugin.yml

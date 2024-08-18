@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>StreamDeckMonSwitch</RootNamespace>
     <AssemblyName>StreamDeckMonitorSwitch</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -71,7 +71,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseAndRun|AnyCPU'">
     <OutputPath>bin\ReleaseAndRun\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -100,16 +101,16 @@
       <HintPath>..\packages\Fizzler.1.2.1\lib\netstandard2.0\Fizzler.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.5.1.1\lib\net46\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.5.2.8\lib\net46\NLog.dll</HintPath>
     </Reference>
     <Reference Include="streamdeck-client-csharp, Version=4.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\streamdeck-client-csharp.4.3.0\lib\netstandard2.0\streamdeck-client-csharp.dll</HintPath>
     </Reference>
-    <Reference Include="StreamDeckTools, Version=6.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\StreamDeck-Tools.6.1.1\lib\netstandard2.0\StreamDeckTools.dll</HintPath>
+    <Reference Include="StreamDeckTools, Version=6.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\StreamDeck-Tools.6.2.0\lib\netstandard2.0\StreamDeckTools.dll</HintPath>
     </Reference>
     <Reference Include="Svg, Version=3.4.0.0, Culture=neutral, PublicKeyToken=12a0bac221edeae2, processorArchitecture=MSIL">
       <HintPath>..\packages\Svg.3.4.4\lib\net462\Svg.dll</HintPath>
@@ -121,8 +122,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Common, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Drawing.Common.7.0.0\lib\net462\System.Drawing.Common.dll</HintPath>
+    <Reference Include="System.Drawing.Common, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Drawing.Common.8.0.1\lib\net462\System.Drawing.Common.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -146,16 +147,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsDisplayAPI, Version=1.3.0.13, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WindowsDisplayAPI.1.3.0.13\lib\net45\WindowsDisplayAPI.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="backend\src\IconsManager\IconManager.cs" />
-    <Compile Include="backend\src\MonitorConfigurator\MonitorConfigurator.cs" />
-    <Compile Include="backend\src\MonitorConfigurator\VCP.cs" />
-    <Compile Include="backend\src\DTOs\InspectorDataSourceDTO.cs" />
-    <Compile Include="backend\src\Actions\MonitorPluginAction.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -163,39 +156,27 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="src\Actions\MonitorPluginAction.cs" />
+    <Compile Include="src\DTOs\IInspectorDataSourceItemDTO.cs" />
+    <Compile Include="src\DTOs\InspectorDataSourceDTO.cs" />
+    <Compile Include="src\DTOs\InspectorDataSourceItemDTO.cs" />
+    <Compile Include="src\DTOs\InspectorDataSourceItemGroupDTO.cs" />
+    <Compile Include="src\IconsManager\IconManager.cs" />
+    <Compile Include="src\IconsManager\MonitorStatus.cs" />
+    <Compile Include="src\IconsManager\TimerState.cs" />
+    <Compile Include="src\IconsManager\TimerStates.cs" />
+    <Compile Include="src\MonitorConfigurator\MonitorConfigurator.cs" />
+    <Compile Include="src\MonitorConfigurator\VCP.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="ci_cd\containers\compose.yaml" />
-    <None Include="ci_cd\containers\controller.dockerfile" />
-    <None Include="ci_cd\containers\worker_frontend.dockerfile" />
-    <None Include="ci_cd\data\hosts" />
-    <None Include="ci_cd\inventory\config.yml" />
-    <None Include="ci_cd\inventory\hosts" />
-    <None Include="ci_cd\playbooks\build_frontend.yml" />
-    <None Include="ci_cd\playbooks\compose_release.yml" />
-    <None Include="ci_cd\playbooks\deploy_plugin.yml" />
-    <None Include="ci_cd\playbooks\post_backend_build.yml" />
-    <None Include="manifest.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="manifest.json" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="StreamDeckMonSwitchMKI_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="readme.md" />
-    <Content Include="frontend\img\categoryIcon%402x.png" />
-    <Content Include="frontend\img\categoryIcon.png" />
-    <Content Include="backend\img\computer-monitor-white.svg" />
-    <Content Include="frontend\img\icon%402x.png" />
-    <Content Include="frontend\img\icon.png" />
-    <Content Include="frontend\img\pluginAction%402x.png" />
-    <Content Include="frontend\img\pluginAction.png" />
-    <Content Include="frontend\img\pluginIcon%402x.png" />
-    <Content Include="frontend\img\pluginIcon.png" />
-    <Content Include="frontend\property_inspector\code.jquery.com_jquery-3.7.1.min.js" />
-    <Content Include="frontend\property_inspector\PluginActionPI.html" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
@@ -211,7 +192,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\" />
-    <Folder Include="frontend\sdpi_components\" />
   </ItemGroup>
   <ItemGroup>
     <PublishFile Include="CommandLine">
@@ -244,26 +224,6 @@
       <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
-    <PublishFile Include="Newtonsoft.Json">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>Assembly</FileType>
-    </PublishFile>
-    <PublishFile Include="NLog">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>Assembly</FileType>
-    </PublishFile>
     <PublishFile Include="readme.md">
       <Visible>False</Visible>
       <Group>
@@ -284,16 +244,6 @@
       <IncludeHash>True</IncludeHash>
       <FileType>Assembly</FileType>
     </PublishFile>
-    <PublishFile Include="StreamDeckTools">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>Assembly</FileType>
-    </PublishFile>
     <PublishFile Include="Svg">
       <Visible>False</Visible>
       <Group>
@@ -305,16 +255,6 @@
       <FileType>Assembly</FileType>
     </PublishFile>
     <PublishFile Include="System.Buffers">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>Assembly</FileType>
-    </PublishFile>
-    <PublishFile Include="System.Drawing.Common">
       <Visible>False</Visible>
       <Group>
       </Group>
@@ -371,10 +311,12 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="img\computer-monitor-white.svg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if $(ConfigurationName) == ReleaseAndRun (
-     wsl -d ubuntu -- cd /mnt/i/_devel/csharp/StreamDeckMonSwitch/StreamDeckMonSwitchMKI/StreamDeckMonSwitchMKI/;ansible-playbook -v  "/mnt/i/_devel/csharp/StreamDeckMonSwitch/StreamDeckMonSwitchMKI/StreamDeckMonSwitchMKI/ci_cd/playbooks/post_backend_build.yml"
-)</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

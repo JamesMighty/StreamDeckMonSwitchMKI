@@ -108,14 +108,15 @@ export class CheckboxListCustom extends Gridded(Persisted(Checkable(DataSourced(
             pending: () => html`<p class="loading">${this.loadingText}</p>`,
             complete: () =>
                 this.renderGrid(
-                    this.renderDataSource((item) =>
-                        this.renderCheckable(
+                    this.renderDataSource((item) => {
+                        console.log("rendering item: ", item);
+                        return this.renderCheckable(
                             'checkbox',
                             keyed(item.groups,
                                 html`
                                     <input
                                         type="checkbox"
-                                        data-groups=${item.groups || "."}
+                                        .data-groups=${item.groups?item.groups:"."}
                                         .checked="${this._get_is_checked(item)}"
                                         .disabled=${this.disabled || item.disabled || false}
                                         .value=${item.value}
@@ -123,8 +124,9 @@ export class CheckboxListCustom extends Gridded(Persisted(Checkable(DataSourced(
                                 />`
                             ),
                             item.label
-                        )
+                        )}
                     ,(group: any, children: any) => {
+                        console.log("rendering group: ", group, " with children ", children)
                         var _a;
                         return html`${((_a = group.label) === null || _a === void 0 ? void 0 : _a.toString()) || ''}<hr/>${children.filter((child: { groups: string; }) => this._placeInGroup(group, child))}</div><br/>`;
                     })

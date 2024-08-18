@@ -1,0 +1,22 @@
+containers:
+  hosts:
+    frontend-builder:
+      ansible_host: frontend-builder
+      workplace: "/opt/workplace"
+    host-win:
+      ansible_host: "host.docker.internal"
+      ansible_user: JJ
+      ansible_shell_type: cmd
+      ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+      ansible_ssh_retries: 3
+      ansible_become_method: "runas"
+
+all:
+  vars:
+    ansible_connection: "ssh"
+    ansible_user: "ansible"
+    ansible_ssh_pass: "ansible"
+
+    # this is also for localhost (ansible-ctl)
+    plugin_home: "/opt/plugin_home"
+    release_dir: "/opt/release"

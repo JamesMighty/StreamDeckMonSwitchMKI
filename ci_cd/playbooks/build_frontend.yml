@@ -3,57 +3,51 @@
   hosts: frontend-builder
 
   tasks:
-    - name: Clean dist build
+    - name: Clean last build from plugin home
       ansible.builtin.file:
         state: absent
-        path: "{{ hostvars['frontend-builder'].plugin_home }}/frontend/sdpi_components/sdpi-components/dist/sdpi-components.js"
+        path: "{{ hostvars[inventory_hostname].plugin_home }}/{{ item }}"
+      with_items:
+        - "example/pi/sdpi-components.js"
+        - "example/pi/sdpi-components.js.map"
+        - "dist/sdpi-components.js"
 
-    - name: Clean example build
-      ansible.builtin.file:
-        state: absent
-        path: "{{ hostvars['frontend-builder'].plugin_home }}/frontend/sdpi_components/sdpi-components/example/pi/sdpi-components.js"
+    - name: Search plugin home
+      ansible.builtin.shell:
+        chdir: "{{ hostvars[inventory_hostname].plugin_home }}/frontend/sdpi-components/"
+        cmd: ls
+      register: plugin_home_frontend_ls
 
-    - name: Clean example build
-      ansible.builtin.file:
-        state: absent
-        path: "{{ hostvars['frontend-builder'].plugin_home }}/frontend/sdpi_components/sdpi-components/example/pi/sdpi-components.js.map"
-
-    - name: Clean dist build
-      ansible.builtin.file:
-        state: absent
-        path: "{{ hostvars['frontend-builder'].workplace }}/dist/sdpi-components.js"
-
-    - name: Clean example build
-      ansible.builtin.file:
-        state: absent
-        path: "{{ hostvars['frontend-builder'].workplace }}/example/pi/sdpi-components.js"
-
-    - name: Clean example build
-      ansible.builtin.file:
-        state: absent
-        path: "{{ hostvars['frontend-builder'].workplace }}/example/pi/sdpi-components.js.map"
+    - name: Clone frontend to workplace
+      ansible.builtin.shell:
+        chdir: "{{ hostvars[inventory_hostname].plugin_home }}/frontend/sdpi-components"
+        cmd: "cp -fR ./{{ item }} {{ hostvars[inventory_hostname].workplace }}/{{ item }}"
+      with_items: "{{ plugin_home_frontend_ls.stdout_lines | difference([ 'node_modules', '.github', '.vscode', 'assets' ]) }}"
 
     - name: Install deps
       ansible.builtin.shell:
-        chdir: "{{ hostvars['frontend-builder'].workplace }}"
-        cmd: npm install
+        chdir: "{{ hostvars[inventory_hostname].workplace }}"
+        cmd: npm install --force
+
+    - name: Npm audit
+      ansible.builtin.shell:
+        chdir: "{{ hostvars[inventory_hostname].workplace }}"
+        cmd: npm audit fix --force
 
     - name: Test sdpi-components
       ansible.builtin.shell:
-        chdir: "{{ hostvars['frontend-builder'].workplace }}"
+        chdir: "{{ hostvars[inventory_hostname].workplace }}"
         cmd: npm run test-silent
 
     - name: Build sdpi-components
       ansible.builtin.shell:
-        chdir: "{{ hostvars['frontend-builder'].workplace }}"
+        chdir: "{{ hostvars[inventory_hostname].workplace }}"
         cmd: npm run build_only
 
-    - name: Copy frontend sdpi-components js
-      ansible.builtin.copy:
-        src:  "{{ hostvars['frontend-builder'].workplace }}/example/pi/sdpi-components.js"
-        dest: "{{ hostvars['frontend-builder'].plugin_home }}/release/build/property_inspector"
-
-    - name: Copy frontend sdpi-components js map
-      ansible.builtin.copy:
-        src:  "{{ hostvars['frontend-builder'].workplace }}/example/pi/sdpi-components.js.map"
-        dest: "{{ hostvars['frontend-builder'].plugin_home }}/frontend/sdpi_components/sdpi-components/example/pi/sdpi-components.js.map"
+    - name: Copy frontend sdpi-components build to plugin home
+      ansible.builtin.shell:
+        cmd: "cp {{ hostvars[inventory_hostname].workplace }}/{{ item }} {{ hostvars[inventory_hostname].plugin_home }}/frontend/sdpi-components/{{ item }}"
+      with_items:
+        - "example/pi/sdpi-components.js.map"
+        - "example/pi/sdpi-components.js"
+        - "dist/sdpi-components.js"

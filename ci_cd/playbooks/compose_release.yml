@@ -1,44 +1,49 @@
 ---
-- name: Update web servers
+- name: Compose Release
   hosts: localhost
 
   tasks:
   - name: Delete content & directory
     ansible.builtin.file:
       state: absent
-      path: "{{ hostvars.containers.plugin_home }}/release/build"
+      path: "{{ hostvars[inventory_hostname].plugin_home }}/release/build"
 
   - name: Prepare destination
     ansible.builtin.file:
       state: directory
-      path: "{{ hostvars.containers.plugin_home }}/release/build"
+      path: "{{ hostvars[inventory_hostname].plugin_home }}/release/build"
+
+  - name: Copy manifest
+    ansible.builtin.copy:
+      src:  "{{ hostvars[inventory_hostname].plugin_home }}/backend/manifest.json"
+      dest: "{{ hostvars[inventory_hostname].plugin_home }}/release/build/"
 
   - name: Copy backend bin
     ansible.builtin.copy:
-      src:  "{{ hostvars.containers.plugin_home }}/bin/ReleaseAndRun/"
-      dest: "{{ hostvars.containers.plugin_home }}/release/build"
+      src:  "{{ hostvars[inventory_hostname].plugin_home }}/backend/bin/ReleaseAndRun/"
+      dest: "{{ hostvars[inventory_hostname].plugin_home }}/release/build/backend"
 
   - name: Copy backend images
     ansible.builtin.copy:
-      src:  "{{ hostvars.containers.plugin_home }}/backend/img/"
-      dest: "{{ hostvars.containers.plugin_home }}/release/build/img"
+      src:  "{{ hostvars[inventory_hostname].plugin_home }}/backend/img/"
+      dest: "{{ hostvars[inventory_hostname].plugin_home }}/release/build/img"
 
   - name: Copy frontend images
     ansible.builtin.copy:
-      src:  "{{ hostvars.containers.plugin_home }}/frontend/img/"
-      dest: "{{ hostvars.containers.plugin_home }}/release/build/img"
+      src:  "{{ hostvars[inventory_hostname].plugin_home }}/frontend/img/"
+      dest: "{{ hostvars[inventory_hostname].plugin_home }}/release/build/img"
 
   - name: Copy frontend property inspector
     ansible.builtin.copy:
-      src:  "{{ hostvars.containers.plugin_home }}/frontend/property_inspector/"
-      dest: "{{ hostvars.containers.plugin_home }}/release/build/src/"
+      src:  "{{ hostvars[inventory_hostname].plugin_home }}/frontend/property_inspector/"
+      dest: "{{ hostvars[inventory_hostname].plugin_home }}/release/build/frontend/"
 
   - name: Copy frontend sdpi-components js
     ansible.builtin.copy:
-      src:  "{{ hostvars.containers.plugin_home }}/frontend/sdpi_components/sdpi-components/example/pi/sdpi-components.js"
-      dest: "{{ hostvars.containers.plugin_home }}/release/build/property_inspector"
+      src:  "{{ hostvars[inventory_hostname].plugin_home }}/frontend/sdpi-components/example/pi/sdpi-components.js"
+      dest: "{{ hostvars[inventory_hostname].plugin_home }}/release/build/frontend/"
 
   - name: Copy frontend sdpi-components js map
     ansible.builtin.copy:
-      src:  "{{ hostvars.containers.plugin_home }}/frontend/sdpi_components/sdpi-components/example/pi/sdpi-components.js.map"
-      dest: "{{ hostvars.containers.plugin_home }}/release/build/property_inspector"
+      src:  "{{ hostvars[inventory_hostname].plugin_home }}/frontend/sdpi-components/example/pi/sdpi-components.js.map"
+      dest: "{{ hostvars[inventory_hostname].plugin_home }}/release/build/frontend/"

@@ -5,7 +5,7 @@
   "Icon": "img/pluginIcon",
   "URL": "",
   "Version": "0.3",
-  "CodePath": "StreamDeckMonitorSwitch.exe",
+  "CodePath": "backend/StreamDeckMonitorSwitch.exe",
   "Category": "Monitor VCP Switch",
   "CategoryIcon": "img/categoryIcon",
   "OS": [
@@ -32,7 +32,7 @@
       "SupportedInMultiActions": true,
       "Tooltip": "",
       "UUID": "com.elgato.streamdeck.streamdeckmonswitch.monitorpluginaction",
-      "PropertyInspectorPath": "src/PluginActionPI.html"
+      "PropertyInspectorPath": "frontend/PluginActionPI.html"
     }
   ]
 }

@@ -27,5 +27,6 @@
         /* typings */
         "typeRoots": ["node_modules/@jest", "node_modules/@types", "src/typings"]
     },
-    "exclude": ["node_modules"]
+    "exclude": ["node_modules"],
+    "typescript": "^5"
 }
