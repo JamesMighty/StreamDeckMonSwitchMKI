@@ -1,13 +1,10 @@
-name: ansible-builder
+name: ansible-cicd
 
 services:
   ansible-ctl:
     image: ansible-controller
     profiles:
-      - frontend
-      - backend
       - ansible
-      - full
     build:
       context: ../
       dockerfile: ci_cd/containers/ansible_controller.dockerfile
@@ -30,7 +27,6 @@ services:
   frontend-builder:
     profiles:
       - frontend
-      - full
     image: frontend-builder-host
     build:
       context: ../

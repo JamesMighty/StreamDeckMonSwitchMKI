@@ -368,3 +368,6 @@ __pycache__/
 
 # CICD secrets
 ci_cd/inventory/secrets.yml
+
+# VS Code
+.vscode/

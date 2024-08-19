@@ -4,6 +4,8 @@
 
   tasks:
     - name: Build backend
-      ansible.windows.win_shell: "{{ hostvars[inventory_hostname].devenv_path }} StreamDeckMonSwitchMKI.sln /Build 'ReleaseAndRun'"
+      ansible.windows.win_shell: "{{ hostvars[inventory_hostname].devenv_path }} StreamDeckMonSwitchMKI.sln /Build '{{ mode }}'"
       args:
         chdir: "{{ hostvars[inventory_hostname].plugin_home }}"
+      failed_when:
+        - mode is undefined

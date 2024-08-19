@@ -3,6 +3,7 @@ containers:
     frontend-builder:
       ansible_host: frontend-builder
       workplace: "/opt/workplace"
+      ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
     host-win:
       ansible_host: "host.docker.internal"
       ansible_user: JJ

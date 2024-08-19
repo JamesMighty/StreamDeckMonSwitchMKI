@@ -1,5 +1,20 @@
 ---
 - import_playbook: build_backend.yml
+  vars:
+    mode: "BuildAndRelease"
+
+- import_playbook: docker_service.yml
+  vars:
+    action: "up"
+    service: "frontend-builder"
+
 - import_playbook: build_frontend.yml
+
+- import_playbook: docker_service.yml
+  vars:
+    action: "down"
+    service: "frontend-builder"
+
 - import_playbook: compose_release.yml
+
 - import_playbook: deploy_plugin.yml

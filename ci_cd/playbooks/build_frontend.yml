@@ -46,7 +46,8 @@
 
     - name: Copy frontend sdpi-components build to plugin home
       ansible.builtin.shell:
-        cmd: "cp {{ hostvars[inventory_hostname].workplace }}/{{ item }} {{ hostvars[inventory_hostname].plugin_home }}/frontend/sdpi-components/{{ item }}"
+        chdir: "{{ hostvars[inventory_hostname].workplace }}"
+        cmd: "cp -f ./{{ item }} {{ hostvars[inventory_hostname].plugin_home }}/frontend/sdpi-components/{{ item }}"
       with_items:
         - "example/pi/sdpi-components.js.map"
         - "example/pi/sdpi-components.js"

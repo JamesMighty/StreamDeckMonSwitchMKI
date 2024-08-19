@@ -4,8 +4,14 @@ using System.Linq;
 
 namespace StreamDeckMonitorSwitch.ddcmon
 {
+    
+    /**
+     * <summary>
+     * Defines possible VCP Property permissions flags
+     * </summary> 
+     */
     [Flags]
-    public enum VCPPropertyPerms: int
+    public enum VCPPropertyPerms : int
     {
         NOT_SET,
         READ,
@@ -13,6 +19,12 @@ namespace StreamDeckMonitorSwitch.ddcmon
         READ_WRITE = READ | WRITE
     }
 
+
+    /**
+     * <summary>
+     * Defines serializable properites for infomation about VCP 
+     * </summary> 
+     */
     [Serializable]
     public class VCPProperty
     {
@@ -29,43 +41,42 @@ namespace StreamDeckMonitorSwitch.ddcmon
 
     }
 
-    public class VCPPropertyStatus
-    {
-        public Dictionary<VCPProperty, int[]> possibleVCPValues = new Dictionary<VCPProperty, int[]>();
-
-    }
-
     /**
-        +----------+-------------------------------------+------------+-------------------------------------+
-        | VCP_CODE | VCP_CODE_NAME                       | READ-WRITE |                                     |
-        +----------+-------------------------------------+------------+-------------------------------------+
-        | 02       | NEW_CONTROL_VALUE                   | READ+WRITE | NEW_CONTROL_VALUE                   |
-        | 04       | RESTORE_FACTORY_DEFAULTS            | WRITE_ONLY | RESTORE_FACTORY_DEFAULTS            |
-        | 05       | RESTORE_FACTORY_LUMINANCE_CONTRAST  | WRITE_ONLY | RESTORE_FACTORY_LUMINANCE_CONTRAST  |
-        | 08       | RESTORE_FACTORY_COLOR_DEFAULTS      | WRITE_ONLY | RESTORE_FACTORY_COLOR_DEFAULTS      |
-        | 0B       | COLOR_TEMPERATURE_INCREMENT         | READ_ONLY  | COLOR_TEMPERATURE_INCREMENT         |
-        | 0C       | COLOR_TEMPERATURE_REQUEST           | READ+WRITE | COLOR_TEMPERATURE_REQUEST           |
-        | 10       | BRIGHTNESS                          | READ+WRITE | BRIGHTNESS                          |
-        | 12       | CONTRAST                            | READ+WRITE | CONTRAST                            |
-        | 14       | SELECT_COLOR_PRESET                 | READ+WRITE | SELECT_COLOR_PRESET                 |
-        | 16       | VIDEO_GAIN_DRIVE_RED                | READ+WRITE | VIDEO_GAIN_DRIVE_RED                |
-        | 18       | VIDEO_GAIN_DRIVE_GREEN              | READ+WRITE | VIDEO_GAIN_DRIVE_GREEN              |
-        | 1A       | VIDEO_GAIN_DRIVE_BLUE               | READ+WRITE | VIDEO_GAIN_DRIVE_BLUE               |
-        | 52       | ACTIVE_CONTROL                      | READ_ONLY  | ACTIVE_CONTROL                      |
-        | 60       | INPUT_SELECT                        | READ+WRITE | INPUT_SELECT                        |
-        | AC       | HORIZONTAL_FREQUENCY                | READ_ONLY  | HORIZONTAL_FREQUENCY                |
-        | AE       | VERTICAL_FREQUENCY                  | READ_ONLY  | VERTICAL_FREQUENCY                  |
-        | B2       | FLAT_PANEL_SUB_PIXEL_LAYOUT         | READ_ONLY  | FLAT_PANEL_SUB_PIXEL_LAYOUT         |
-        | B6       | DISPLAY_TECHNOLOGY_TYPE             | READ_ONLY  | DISPLAY_TECHNOLOGY_TYPE             |
-        | C0       | DISPLAY_USAGE_TIME                  | READ_ONLY  | DISPLAY_USAGE_TIME                  |
-        | C6       | APPLICATION_ENABLE_KEY              | READ_ONLY  | APPLICATION_ENABLE_KEY              |
-        | C8       | DISPLAY_CONTROLLER_ID               | READ+WRITE | DISPLAY_CONTROLLER_ID               |
-        | C9       | DISPLAY_FIRMWARE_LEVEL              | READ_ONLY  | DISPLAY_FIRMWARE_LEVEL              |
-        | CA       | OSD                                 | READ+WRITE | OSD                                 |
-        | CC       | OSD_LANGUAGE                        | READ+WRITE | OSD_LANGUAGE                        |
-        | D6       | POWER_MODE                          | READ+WRITE | POWER_MODE                          |
-        +----------+-------------------------------------+------------+-------------------------------------+
-      */
+     *  <summary>
+     *  Defines some of the known VCPs and their properties in statically accessible manner
+     *  </summary>
+     * 
+     * 
+     *  +----------+-------------------------------------+------------+
+     *  | VCP_CODE | VCP_CODE_NAME                       | READ-WRITE |
+     *  +----------+-------------------------------------+------------+
+     *  | 02       | NEW_CONTROL_VALUE                   | READ+WRITE |
+     *  | 04       | RESTORE_FACTORY_DEFAULTS            | WRITE_ONLY |
+     *  | 05       | RESTORE_FACTORY_LUMINANCE_CONTRAST  | WRITE_ONLY |
+     *  | 08       | RESTORE_FACTORY_COLOR_DEFAULTS      | WRITE_ONLY |
+     *  | 0B       | COLOR_TEMPERATURE_INCREMENT         | READ_ONLY  |
+     *  | 0C       | COLOR_TEMPERATURE_REQUEST           | READ+WRITE |
+     *  | 10       | BRIGHTNESS                          | READ+WRITE |
+     *  | 12       | CONTRAST                            | READ+WRITE |
+     *  | 14       | SELECT_COLOR_PRESET                 | READ+WRITE |
+     *  | 16       | VIDEO_GAIN_DRIVE_RED                | READ+WRITE |
+     *  | 18       | VIDEO_GAIN_DRIVE_GREEN              | READ+WRITE |
+     *  | 1A       | VIDEO_GAIN_DRIVE_BLUE               | READ+WRITE |
+     *  | 52       | ACTIVE_CONTROL                      | READ_ONLY  |
+     *  | 60       | INPUT_SELECT                        | READ+WRITE |
+     *  | AC       | HORIZONTAL_FREQUENCY                | READ_ONLY  |
+     *  | AE       | VERTICAL_FREQUENCY                  | READ_ONLY  |
+     *  | B2       | FLAT_PANEL_SUB_PIXEL_LAYOUT         | READ_ONLY  |
+     *  | B6       | DISPLAY_TECHNOLOGY_TYPE             | READ_ONLY  |
+     *  | C0       | DISPLAY_USAGE_TIME                  | READ_ONLY  |
+     *  | C6       | APPLICATION_ENABLE_KEY              | READ_ONLY  |
+     *  | C8       | DISPLAY_CONTROLLER_ID               | READ+WRITE |
+     *  | C9       | DISPLAY_FIRMWARE_LEVEL              | READ_ONLY  |
+     *  | CA       | OSD                                 | READ+WRITE |
+     *  | CC       | OSD_LANGUAGE                        | READ+WRITE |
+     *  | D6       | POWER_MODE                          | READ+WRITE |
+     *  +----------+-------------------------------------+------------+
+     */
     public static class VCP_PROPS
     {
         public static readonly string UNKNOWN_CODE_NAME = "Unknown";

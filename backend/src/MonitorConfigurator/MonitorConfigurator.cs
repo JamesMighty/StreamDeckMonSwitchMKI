@@ -70,7 +70,6 @@ namespace StreamDeckMonitorSwitch.ddcmon
         {
         }
 
-#pragma warning disable IDE1006 // Naming Styles
         public static PhysicalMonitor fromEmumeration(char[] capabilities, uint capsLen, PHYSICAL_MONITOR fmon, MonitorInfo mi, IntPtr device)
         {
             PhysicalMonitor monitor = new PhysicalMonitor();
@@ -78,6 +77,7 @@ namespace StreamDeckMonitorSwitch.ddcmon
             monitor.info = mi;
             monitor.device = device;
 
+            // Parse data from string enumeration
             uint floor = 0;
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
             string key = "";
@@ -95,7 +95,6 @@ namespace StreamDeckMonitorSwitch.ddcmon
                         floor++;
                         break;
                     case ')':
-                        
                         floor--;
                         switch (floor)
                         {
@@ -122,8 +121,8 @@ namespace StreamDeckMonitorSwitch.ddcmon
                         break;
                 }
             }
-#pragma warning restore IDE1006 // Naming Styles
 
+            // Create and fill VCP properties objs based on parsed data
             foreach (KeyValuePair<string, string> kvp in keyValuePairs)
             {
                 switch(kvp.Key)
@@ -184,6 +183,13 @@ namespace StreamDeckMonitorSwitch.ddcmon
         }
     }
 
+    /**
+     *  <summary>
+     *  Static object for access and reading infomation about current monitors via c libs,
+     *  with automatic update of those
+     *  </summary>
+     *
+     */
     public static class MonitorConfigurator
     {
         public static int UPDATE_PERIOD_MS = 10 * 1000;
@@ -244,7 +250,7 @@ namespace StreamDeckMonitorSwitch.ddcmon
         public static extern bool GetDevicePowerState(IntPtr handle, ref bool state);
 
         static bool MonitorEnum(IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor, IntPtr dwData)
-        {   
+        {
             uint nfmon = 0;
             MonitorInfo mi = new MonitorInfo();
             mi.size = (uint)Marshal.SizeOf(mi);
@@ -322,7 +328,7 @@ namespace StreamDeckMonitorSwitch.ddcmon
 
         [STAThread]
         public static void Main()
-        { 
+        {
             MonitorEnumDelegate med = new MonitorEnumDelegate(MonitorEnum);
             EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, med, IntPtr.Zero);
             Console.ReadKey();
