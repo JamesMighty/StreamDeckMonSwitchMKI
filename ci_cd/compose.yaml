@@ -1,4 +1,5 @@
 name: ansible-cicd
+version: "3.8"
 
 services:
   ansible-ctl:
@@ -22,7 +23,7 @@ services:
       resources:
         reservations:
           cpus: "4.0"
-          memory: 200M
+          memory: 300M
 
   frontend-builder:
     profiles:

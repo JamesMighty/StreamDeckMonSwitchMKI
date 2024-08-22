@@ -3,12 +3,11 @@ containers:
     frontend-builder:
       ansible_host: frontend-builder
       workplace: "/opt/workplace"
-      ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+
     host-win:
       ansible_host: "host.docker.internal"
       ansible_user: JJ
       ansible_shell_type: cmd
-      ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
       ansible_ssh_retries: 3
       ansible_become_method: "runas"
 
@@ -17,6 +16,7 @@ all:
     ansible_connection: "ssh"
     ansible_user: "ansible"
     ansible_ssh_pass: "ansible"
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
     # this is also for localhost (ansible-ctl)
     plugin_home: "/opt/plugin_home"

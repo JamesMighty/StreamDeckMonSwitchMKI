@@ -1,8 +1,12 @@
 ﻿
 
-# Backend
+## Backend
 
-## StreamDeck SDK redme:
+
+Defines .NET application, which run as subprocess of Streamdeck application and collects and changes monitor information on current hardware.
+
+
+### StreamDeck SDK readme:
 
 To use:
 1. Right click the project and choose "Manage Nuget Packages"
@@ -17,11 +21,3 @@ For help with StreamDeck-Tools:
 Resources:
 * StreamDeck-Tools samples and tutorial: https://github.com/BarRaider/streamdeck-tools
 * EasyPI library (for working with Property Inspector): https://github.com/BarRaider/streamdeck-easypi
-
-# Frontend
-
-Debug streamdeck at: http://localhost:23654/
-
-## Custom build for sdpi-components
-
-git module from

@@ -54,10 +54,10 @@ ENV ANSIBLE_GATHERING=smart \
 RUN ansible-galaxy collection install ansible.posix
 RUN ansible-galaxy collection install ansible.windows
 
-WORKDIR /ansible/playbooks
-
 EXPOSE 22
 EXPOSE 830
+
+WORKDIR /ansible/playbooks
 
 COPY ci_cd/data/ansible_controller_entrypoint.sh /entrypoint.sh
 

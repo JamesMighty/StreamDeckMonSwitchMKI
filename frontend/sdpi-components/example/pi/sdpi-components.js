@@ -1356,11 +1356,12 @@
                 }, (group, children) => {
                     console.log("rendering group: ", group, " with children ", children);
                     var _a;
-                    return x `${((_a = group.label) === null || _a === void 0 ? void 0 : _a.toString()) || ''}<hr/>${children.filter((child) => this._placeInGroup(group, child))}</div><br/>`;
+                    return x `<div class="group">${((_a = group.label) === null || _a === void 0 ? void 0 : _a.toString()) || ''}</div><hr/>${children.filter((child) => this._placeInGroup(group, child))}</div><br/>`;
                 }))
             });
         }
         handleChange(ev) {
+            var _b;
             const value = this.parseValue(ev.target.value);
             var this_mock = {
                 "value": this.value
@@ -1369,12 +1370,12 @@
                 return;
             }
             console.log("Event target: ", ev.target, "dataset: ", ev.target.dataset, " item: ");
-            const grouping = ev.target.getAttribute("groups") || ".";
+            const grouping = ((_b = ev.target.parentElement) === null || _b === void 0 ? void 0 : _b.getElementsByClassName("group")[0].innerHTML) || "";
             if (ev.target.checked) {
-                setByPath(this_mock, "value" + grouping, value);
+                setByPath(this_mock, "value." + grouping, value);
             }
             else {
-                removeByPath(this_mock, "value" + grouping, value);
+                removeByPath(this_mock, "value." + grouping, value);
             }
             this.value = JSON.parse(JSON.stringify(this_mock.value));
             console.log("Values: ", this.value);

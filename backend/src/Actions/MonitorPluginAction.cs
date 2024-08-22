@@ -218,12 +218,14 @@ namespace StreamDeckMonitorSwitch
 
             var monitorspayload = JObject.FromObject(new InspectorDataSourceDTO("getMonitors", monitorsPayloadRaw));
             Connection.SendToPropertyInspectorAsync(monitorspayload);
+
             Logger.Instance.LogMessage(TracingLevel.DEBUG, monitorspayload.ToString());
         }
 
         private void UpdateInspectorProperties()
         {
             Logger.Instance.LogMessage(TracingLevel.DEBUG, "Getting properties ..");
+
             var propertiesPayloadRaw = MonitorConfigurator.Monitors
                 .Where(monitor => Settings.Monitors.Contains(monitor.model))
                 .Select(monitor =>
@@ -244,6 +246,7 @@ namespace StreamDeckMonitorSwitch
 
             var propertiesPayload = JObject.FromObject(new InspectorDataSourceDTO("getProperties", propertiesPayloadRaw));
             Connection.SendToPropertyInspectorAsync(propertiesPayload);
+
             Logger.Instance.LogMessage(TracingLevel.DEBUG, propertiesPayload.ToString());
         }
 
@@ -278,6 +281,7 @@ namespace StreamDeckMonitorSwitch
 
             var valuesPayload = JObject.FromObject(new InspectorDataSourceDTO("getValues", valuesPayloadRaw));
             Connection.SendToPropertyInspectorAsync(valuesPayload);
+
             Logger.Instance.LogMessage(TracingLevel.DEBUG, valuesPayload.ToString());
         }
 
