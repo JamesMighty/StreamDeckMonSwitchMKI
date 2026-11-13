@@ -1,0 +1,13 @@
+{
+    "name": "streamdeckmonswitch-e2e",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "test": "playwright test"
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.45.0",
+        "ws": "^8.18.0",
+        "@types/ws": "^8.5.10"
+    }
+}

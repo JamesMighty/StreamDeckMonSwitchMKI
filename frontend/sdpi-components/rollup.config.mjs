@@ -33,7 +33,8 @@ export default (commandLineArgs) => {
             !dev && minifyHTML.default(),
             typescript({
                 sourceMap: dev,
-                inlineSources: dev
+                inlineSources: dev,
+                exclude: ['**/__tests__/**', '**/*.test.ts']
             }),
             nodeResolve(),
             commonjs(),

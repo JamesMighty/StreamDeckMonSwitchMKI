@@ -1262,6 +1262,9 @@
         console.log("getByPath: path: " + path + ", from obj: ", obj);
         var parts = path.split('.').filter(element => element);
         var o = obj;
+        if (o === undefined || o === null) {
+            return [];
+        }
         if (parts.length > 1) {
             for (var i = 0; i < parts.length - 1; i++) {
                 if (!o[parts[i]])
@@ -1290,8 +1293,8 @@
         if (o[parts[parts.length - 1]].length == 0)
             delete o[parts[parts.length - 1]];
     }
-    function setByPath(obj, path, value) {
-        console.log("setByPath: path: " + path + ", value: " + value + ", to obj: ", obj);
+    function setByPath(obj, path, value, exclusive = false) {
+        console.log("setByPath: path: " + path + ", value: " + value + ", exclusive: " + exclusive + ", to obj: ", obj);
         var parts = path.split('.').filter(element => element);
         var o = obj;
         var last_part = parts.length - 1;
@@ -1302,12 +1305,25 @@
                 o = o[parts[i]];
             }
         }
-        o[parts[last_part]] = [];
+        if (exclusive) {
+            o[parts[last_part]] = [value];
+            console.log("values after exclusive set: ", o[parts[last_part]]);
+            return;
+        }
+        if (!Array.isArray(o[parts[last_part]])) {
+            o[parts[last_part]] = [];
+        }
         console.log("values before set: ", o[parts[last_part]]);
-        o[parts[last_part]].push(value);
+        if (o[parts[last_part]].indexOf(value) === -1) {
+            o[parts[last_part]].push(value);
+        }
         console.log("values after set: ", o[parts[last_part]]);
     }
     let CheckboxListCustom = class CheckboxListCustom extends Gridded(Persisted(Checkable(DataSourced(DynamicValueType(Input(s$4)))))) {
+        constructor() {
+            super(...arguments);
+            this.exclusive = false;
+        }
         static get styles() {
             return [
                 ...super.styles,
@@ -1320,15 +1336,20 @@
             `
             ];
         }
-        _placeInGroup(group, child) {
-            if (child.groups) {
-                child.groups += "." + group.label.toString();
+        _assignGroupPaths(items, prefix = '.') {
+            var _b, _c;
+            if (!items) {
+                return;
             }
-            else {
-                child.groups = group.label.toString();
+            for (const item of items) {
+                if (item && Array.isArray(item.children)) {
+                    const label = (_c = (_b = item.label) === null || _b === void 0 ? void 0 : _b.toString()) !== null && _c !== void 0 ? _c : '';
+                    this._assignGroupPaths(item.children, prefix === '.' ? '.' + label : prefix + '.' + label);
+                }
+                else if (item) {
+                    item.groups = prefix;
+                }
             }
-            console.log("Placed child:", child, " to group", group);
-            return child;
         }
         _get_is_checked(item) {
             var path = item.groups || ".";
@@ -1342,46 +1363,56 @@
         render() {
             return this.items.render({
                 pending: () => x `<p class="loading">${this.loadingText}</p>`,
-                complete: () => this.renderGrid(this.renderDataSource((item) => {
-                    console.log("rendering item: ", item);
-                    return this.renderCheckable('checkbox', i$1(item.groups, x `
+                complete: () => {
+                    this._assignGroupPaths(this.items.value);
+                    return this.renderGrid(this.renderDataSource((item) => {
+                        console.log("rendering item: ", item);
+                        return this.renderCheckable('checkbox', i$1((item.groups || '.') + '=' + item.value, x `
                                     <input
                                         type="checkbox"
-                                        .data-groups=${item.groups ? item.groups : "."}
+                                        data-groups=${item.groups || '.'}
                                         .checked="${this._get_is_checked(item)}"
                                         .disabled=${this.disabled || item.disabled || false}
                                         .value=${item.value}
                                         @change=${this.handleChange}
                                 />`), item.label);
-                }, (group, children) => {
-                    console.log("rendering group: ", group, " with children ", children);
-                    var _a;
-                    return x `<div class="group">${((_a = group.label) === null || _a === void 0 ? void 0 : _a.toString()) || ''}</div><hr/>${children.filter((child) => this._placeInGroup(group, child))}</div><br/>`;
-                }))
+                    }, (group, children) => {
+                        console.log("rendering group: ", group, " with children ", children);
+                        var _a;
+                        return x `<div class="group">${((_a = group.label) === null || _a === void 0 ? void 0 : _a.toString()) || ''}</div><hr/>${children}</div><br/>`;
+                    }));
+                }
             });
         }
         handleChange(ev) {
-            var _b;
+            var _b, _c;
             const value = this.parseValue(ev.target.value);
-            var this_mock = {
-                "value": this.value
-            };
             if (value === undefined) {
                 return;
             }
-            console.log("Event target: ", ev.target, "dataset: ", ev.target.dataset, " item: ");
-            const grouping = ((_b = ev.target.parentElement) === null || _b === void 0 ? void 0 : _b.getElementsByClassName("group")[0].innerHTML) || "";
+            const grouping = ((_b = ev.target.dataset) === null || _b === void 0 ? void 0 : _b.groups) || '.';
+            var this_mock = {
+                "value": JSON.parse(JSON.stringify((_c = this.value) !== null && _c !== void 0 ? _c : {}))
+            };
+            console.log("Event target: ", ev.target, "dataset: ", ev.target.dataset, " grouping: ", grouping);
             if (ev.target.checked) {
-                setByPath(this_mock, "value." + grouping, value);
+                setByPath(this_mock, "value" + grouping, value, this.exclusive);
             }
             else {
-                removeByPath(this_mock, "value." + grouping, value);
+                removeByPath(this_mock, "value" + grouping, value);
+            }
+            if (this_mock.value === undefined) {
+                this_mock.value = Array.isArray(this.value) ? [] : {};
             }
             this.value = JSON.parse(JSON.stringify(this_mock.value));
             console.log("Values: ", this.value);
             return;
         }
     };
+    __decorate([
+        n$4({ attribute: 'exclusive', type: Boolean }),
+        __metadata("design:type", Object)
+    ], CheckboxListCustom.prototype, "exclusive", void 0);
     CheckboxListCustom = __decorate([
         e$4('sdpi-checkbox-list-custom')
     ], CheckboxListCustom);

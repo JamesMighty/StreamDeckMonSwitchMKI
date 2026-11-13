@@ -27,7 +27,7 @@
       src: "{{ hostvars[inventory_hostname].plugin_home }}\\release\\build\\"
       dest: "{{ hostvars[inventory_hostname].release_plugins_dir }}\\{{ hostvars[inventory_hostname].release_plugin_dir_name }}"
 
-  # Start-Process will not work as it cannot open interactive executables remotelly
+  # Start-Process will not work as it cannot open interactive executables remotely
   # workaround:
   #   1. Requires RDP - https://serverfault.com/questions/690852/use-powershell-to-start-a-gui-program-on-a-remote-machine
   #   2. Use Scheduled Task - need WMI perms Enable remote and Execute methods

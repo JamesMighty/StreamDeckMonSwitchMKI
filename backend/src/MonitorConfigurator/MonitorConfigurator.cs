@@ -172,6 +172,22 @@ namespace StreamDeckMonitorSwitch.ddcmon
 
                             vcpValues.Add((int)vcpHex);
                         }
+
+                        // Flush the trailing VCP code (e.g. D6 when the caps string
+                        // ends with "D6(01 04 05))"), which the loop above never emits.
+                        if (lastVCPHex != 0)
+                        {
+                            VCPProperty lastVcpProperty;
+                            if (VCP_PROPS.IndexByHexCode.ContainsKey(lastVCPHex))
+                            {
+                                lastVcpProperty = VCP_PROPS.IndexByHexCode[lastVCPHex];
+                            }
+                            else
+                            {
+                                lastVcpProperty = new VCPProperty(lastVCPHex, VCP_PROPS.UNKNOWN_CODE_NAME, VCPPropertyPerms.NOT_SET);
+                            }
+                            monitor.possibleVCPValues[lastVcpProperty] = new List<int>(vcpValues);
+                        }
                         break;
                     default:
                         monitor.GetType().GetProperty(kvp.Key)?.SetValue(monitor, kvp.Value, null);
@@ -192,7 +208,20 @@ namespace StreamDeckMonitorSwitch.ddcmon
      */
     public static class MonitorConfigurator
     {
-        public static int UPDATE_PERIOD_MS = 10 * 1000;
+        public static readonly int UPDATE_PERIOD_MS = ReadUpdatePeriodMs();
+
+        // Overridable so e2e tests can lengthen the native monitor re-enumeration
+        // interval of processes that load this assembly.
+        private static int ReadUpdatePeriodMs()
+        {
+            var overrideValue = Environment.GetEnvironmentVariable("SDMONSWITCH_UPDATE_PERIOD_MS");
+            int parsed;
+            if (!string.IsNullOrEmpty(overrideValue) && int.TryParse(overrideValue, out parsed) && parsed > 0)
+            {
+                return parsed;
+            }
+            return 10 * 1000;
+        }
 
         public static List<PhysicalMonitor> Monitors { get; private set; } = new List<PhysicalMonitor>();
         private static List<PhysicalMonitor> LoadingMonitors { get; set; } = new List<PhysicalMonitor>();
@@ -205,11 +234,22 @@ namespace StreamDeckMonitorSwitch.ddcmon
         static MonitorConfigurator()
         {
             UpdateMonitors();
+            // dueTime equals the period: the initial enumeration above is synchronous,
+            // and starting the timer with dueTime 0 would race it (both mutate LoadingMonitors).
             UpdateMonitorsTimer = new Timer((s) => {
-                    UpdateMonitors();
-                    OnUpdateMonitors?.Invoke();
+                    try
+                    {
+                        UpdateMonitors();
+                        OnUpdateMonitors?.Invoke();
+                    }
+                    catch (Exception ex)
+                    {
+                        // An unhandled exception on a ThreadPool timer callback
+                        // terminates the process; a failed refresh should not.
+                        Console.WriteLine("MonitorConfigurator refresh failed: " + ex);
+                    }
                 },
-                0, UPDATE_PERIOD_MS, UPDATE_PERIOD_MS);
+                UPDATE_PERIOD_MS, UPDATE_PERIOD_MS, UPDATE_PERIOD_MS);
         }
 
         [DllImport("Dxva2.dll", EntryPoint = "GetCapabilitiesStringLength", SetLastError = true)]
