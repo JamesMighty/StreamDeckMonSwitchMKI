@@ -1,49 +1,67 @@
 ---
 - name: Compose Release
   hosts: localhost
+  vars:
+    needs_release: >-
+      {{ (hostvars['localhost'].backend_changed | default(false) | bool)
+         or (hostvars['localhost'].frontend_changed | default(false) | bool) }}
 
   tasks:
   - name: Delete content & directory
     ansible.builtin.file:
       state: absent
       path: "{{ hostvars[inventory_hostname].plugin_home }}/release/build"
+    when: needs_release | bool
 
   - name: Prepare destination
     ansible.builtin.file:
       state: directory
       path: "{{ hostvars[inventory_hostname].plugin_home }}/release/build"
+    when: needs_release | bool
 
   - name: Copy manifest
     ansible.builtin.copy:
       src:  "{{ hostvars[inventory_hostname].plugin_home }}/backend/manifest.json"
       dest: "{{ hostvars[inventory_hostname].plugin_home }}/release/build/"
+    when: needs_release | bool
 
   - name: Copy backend bin
     ansible.builtin.copy:
       src:  "{{ hostvars[inventory_hostname].plugin_home }}/backend/bin/ReleaseAndRun/"
       dest: "{{ hostvars[inventory_hostname].plugin_home }}/release/build/backend"
+    when: needs_release | bool
 
   - name: Copy backend images
     ansible.builtin.copy:
       src:  "{{ hostvars[inventory_hostname].plugin_home }}/backend/img/"
       dest: "{{ hostvars[inventory_hostname].plugin_home }}/release/build/img"
+    when: needs_release | bool
 
   - name: Copy frontend images
     ansible.builtin.copy:
       src:  "{{ hostvars[inventory_hostname].plugin_home }}/frontend/img/"
       dest: "{{ hostvars[inventory_hostname].plugin_home }}/release/build/img"
+    when: needs_release | bool
 
   - name: Copy frontend property inspector
     ansible.builtin.copy:
       src:  "{{ hostvars[inventory_hostname].plugin_home }}/frontend/property_inspector/"
       dest: "{{ hostvars[inventory_hostname].plugin_home }}/release/build/frontend/"
+    when: needs_release | bool
 
   - name: Copy frontend sdpi-components js
     ansible.builtin.copy:
       src:  "{{ hostvars[inventory_hostname].plugin_home }}/frontend/sdpi-components/example/pi/sdpi-components.js"
       dest: "{{ hostvars[inventory_hostname].plugin_home }}/release/build/frontend/"
+    when: needs_release | bool
 
   - name: Copy frontend sdpi-components js map
     ansible.builtin.copy:
       src:  "{{ hostvars[inventory_hostname].plugin_home }}/frontend/sdpi-components/example/pi/sdpi-components.js.map"
       dest: "{{ hostvars[inventory_hostname].plugin_home }}/release/build/frontend/"
+    when: needs_release | bool
+
+  - name: Report skip
+    ansible.builtin.debug:
+      msg: "No backend or frontend changes detected — skipping release composition."
+    when: not (needs_release | bool)

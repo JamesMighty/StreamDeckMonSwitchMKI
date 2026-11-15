@@ -2,9 +2,7 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { keyed } from 'lit/directives/keyed.js';
 
-import { Checkable, DataSourced, DynamicValueType, Gridded, Input, Item, Persisted } from '../mixins';
-import { LocalizedMessage } from '../core';
-
+import { Checkable, DataSourced, DynamicValueType, Gridded, Input, Persisted } from '../mixins';
 
 
 function getByPath(obj: any, path: string) {
@@ -48,7 +46,7 @@ function removeByPath(obj: any, path: string, value: string | number | boolean) 
         delete o[parts[parts.length - 1]]
 }
 
-function setByPath(obj: any, path: string, value: string | number | boolean, exclusive: boolean = false) {
+function setByPath(obj: any, path: string, value: string | number | boolean, exclusive = false) {
     console.log("setByPath: path: " + path + ", value: " + value + ", exclusive: " + exclusive + ", to obj: ", obj);
 
     var parts = path.split('.').filter(element => element);
@@ -111,7 +109,7 @@ export class CheckboxListCustom extends Gridded(Persisted(Checkable(DataSourced(
      * Must run before rendering so both check-state lookup and change handling
      * can resolve the settings path of each item.
      */
-    _assignGroupPaths(items?: any[], prefix: string = '.') {
+    _assignGroupPaths(items?: any[], prefix = '.') {
         if (!items) {
             return;
         }

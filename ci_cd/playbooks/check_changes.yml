@@ -1,0 +1,100 @@
+---
+- name: Detect changes
+  hosts: localhost
+  gather_facts: false
+  vars:
+    state_dir: "{{ plugin_home }}/release/.ci_state"
+    force_build: "{{ force | default(false) | bool }}"
+
+  tasks:
+    - name: Ensure state directory exists
+      ansible.builtin.file:
+        path: "{{ state_dir }}"
+        state: directory
+
+    # --- Backend hash ---
+    - name: Compute backend source hash
+      ansible.builtin.shell: |
+        find {{ plugin_home }}/backend/src \
+             {{ plugin_home }}/backend/Program.cs \
+             {{ plugin_home }}/backend/manifest.json \
+             {{ plugin_home }}/backend/App.config \
+             {{ plugin_home }}/backend/packages.config \
+             {{ plugin_home }}/backend/StreamDeckMonitorSwitch.csproj \
+             -type f 2>/dev/null | sort | xargs md5sum 2>/dev/null | md5sum | awk '{print $1}'
+      register: backend_hash_result
+      changed_when: false
+
+    - name: Read stored backend hash
+      ansible.builtin.slurp:
+        src: "{{ state_dir }}/backend.hash"
+      register: stored_backend_hash
+      ignore_errors: true
+
+    - name: Set backend_changed fact
+      ansible.builtin.set_fact:
+        backend_changed: >-
+          {{ force_build
+             or (stored_backend_hash is failed)
+             or (backend_hash_result.stdout | trim != (stored_backend_hash.content | default('') | b64decode | trim)) }}
+
+    # --- Frontend build hash (source that affects npm output) ---
+    - name: Compute frontend build hash
+      ansible.builtin.shell: |
+        find {{ plugin_home }}/frontend/sdpi-components/src \
+             {{ plugin_home }}/frontend/sdpi-components/package.json \
+             {{ plugin_home }}/frontend/sdpi-components/tsconfig.json \
+             {{ plugin_home }}/frontend/sdpi-components/rollup.config.mjs \
+             {{ plugin_home }}/frontend/sdpi-components/jest.config.ts \
+             -type f 2>/dev/null | sort | xargs md5sum 2>/dev/null | md5sum | awk '{print $1}'
+      register: frontend_build_hash_result
+      changed_when: false
+
+    - name: Read stored frontend build hash
+      ansible.builtin.slurp:
+        src: "{{ state_dir }}/frontend_build.hash"
+      register: stored_frontend_build_hash
+      ignore_errors: true
+
+    - name: Set frontend_build_changed fact
+      ansible.builtin.set_fact:
+        frontend_build_changed: >-
+          {{ force_build
+             or (stored_frontend_build_hash is failed)
+             or (frontend_build_hash_result.stdout | trim != (stored_frontend_build_hash.content | default('') | b64decode | trim)) }}
+
+    # --- Frontend full hash (all frontend files, for deploy decision) ---
+    - name: Compute frontend full hash
+      ansible.builtin.shell: |
+        find {{ plugin_home }}/frontend -type f \
+             ! -path "*/node_modules/*" \
+             ! -path "*/dist/*" \
+             ! -path "*/.git/*" \
+             ! -name "plugin-action-pi.js" \
+             | sort | xargs md5sum 2>/dev/null | md5sum | awk '{print $1}'
+      register: frontend_all_hash_result
+      changed_when: false
+
+    - name: Read stored frontend full hash
+      ansible.builtin.slurp:
+        src: "{{ state_dir }}/frontend_all.hash"
+      register: stored_frontend_all_hash
+      ignore_errors: true
+
+    - name: Set frontend_changed fact
+      ansible.builtin.set_fact:
+        frontend_changed: >-
+          {{ force_build
+             or (stored_frontend_all_hash is failed)
+             or (frontend_all_hash_result.stdout | trim != (stored_frontend_all_hash.content | default('') | b64decode | trim)) }}
+
+    # --- Summary ---
+    - name: Report change detection
+      ansible.builtin.debug:
+        msg:
+          - "backend_changed: {{ backend_changed }}"
+          - "frontend_build_changed: {{ frontend_build_changed }}"
+          - "frontend_changed: {{ frontend_changed }}"
+          - "force_build: {{ force_build }}"
+
+    # --- Save hashes (only after successful build+deploy, done in save_state.yml) ---

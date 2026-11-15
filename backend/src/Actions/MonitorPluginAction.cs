@@ -13,7 +13,7 @@ using System.Drawing;
 namespace StreamDeckMonitorSwitch
 {
 
-    [PluginActionId("com.elgato.streamdeck.streamdeckmonswitch.monitorpluginaction")]
+    [PluginActionId(Constants.ACTION_UUID)]
     public class MonitorPluginAction : KeypadBase
     {
         public SvgDocument svgIcon { get; internal set; }
@@ -38,16 +38,16 @@ namespace StreamDeckMonitorSwitch
                 return instance;
             }
 
-            [JsonProperty("monitors")]
+            [JsonProperty(Constants.SettingsKeys.MONITORS)]
             public List<string> Monitors { get; private set; } = new List<string>();
 
-            [JsonProperty("properties")]
+            [JsonProperty(Constants.SettingsKeys.PROPERTIES)]
             public Dictionary<string, List<string>> Properties { get; private set; } = new Dictionary<string, List<string>>();
 
             // The PI persists checkbox selections as arrays of strings
             // (e.g. { "MODEL-A": { "Input Select": ["15", "17"] } }), so accept
             // lenient shapes; single scalars are wrapped into one-element lists.
-            [JsonProperty("values")]
+            [JsonProperty(Constants.SettingsKeys.VALUES)]
             [JsonConverter(typeof(VcpActionsSettingsConverter))]
             public Dictionary<string, Dictionary<string, List<int>>> VCPActionsSettings { get; private set; } = new Dictionary<string, Dictionary<string, List<int>>>();
 
@@ -57,19 +57,19 @@ namespace StreamDeckMonitorSwitch
             //   loop      - cycle through all selected values in order (discrete)
             //   scrollUp  - increase a continuous value by stepSize
             //   scrollDown- decrease a continuous value by stepSize
-            [JsonProperty("actionMode")]
-            public string ActionMode { get; private set; } = "set";
+            [JsonProperty(Constants.SettingsKeys.ACTION_MODE)]
+            public string ActionMode { get; private set; } = ActionModes.SET;
 
             // Step size used by the scrollUp / scrollDown modes on continuous controls.
-            [JsonProperty("stepSize")]
+            [JsonProperty(Constants.SettingsKeys.STEP_SIZE)]
             public int StepSize { get; private set; } = 1;
 
             // When true, scrolling past the max/min wraps around to the other end.
-            [JsonProperty("wrapAround")]
+            [JsonProperty(Constants.SettingsKeys.WRAP_AROUND)]
             public bool WrapAround { get; private set; } = false;
 
             // Target value used by the "set" mode on continuous controls.
-            [JsonProperty("targetValue")]
+            [JsonProperty(Constants.SettingsKeys.TARGET_VALUE)]
             public int TargetValue { get; private set; } = 50;
 
             /**
@@ -81,7 +81,7 @@ namespace StreamDeckMonitorSwitch
                 if (Monitors == null) Monitors = new List<string>();
                 if (Properties == null) Properties = new Dictionary<string, List<string>>();
                 if (VCPActionsSettings == null) VCPActionsSettings = new Dictionary<string, Dictionary<string, List<int>>>();
-                if (ActionMode == null) ActionMode = "set";
+                if (ActionMode == null) ActionMode = ActionModes.SET;
                 if (StepSize < 1) StepSize = 1;
             }
         }
@@ -145,7 +145,7 @@ namespace StreamDeckMonitorSwitch
             {
                 IsChangingVCP = true;
                 Logger.Instance.LogMessage(TracingLevel.INFO, "Key Pressed");
-                svgIcon.GetElementById("monitor_outline").Fill = new SvgColourServer(Color.Orange);
+                svgIcon.GetElementById(Constants.SvgIds.MONITOR_OUTLINE).Fill = new SvgColourServer(Color.Orange);
                 PushIcon();
 
                 foreach (var monitorEntry in Settings.Properties)
@@ -251,7 +251,7 @@ namespace StreamDeckMonitorSwitch
 
         private void SetFeedbackColor(bool success)
         {
-            svgIcon.GetElementById("monitor_outline").Fill = new SvgColourServer(success ? Color.Yellow : Color.Red);
+            svgIcon.GetElementById(Constants.SvgIds.MONITOR_OUTLINE).Fill = new SvgColourServer(success ? Color.Yellow : Color.Red);
             PushIcon();
         }
 
@@ -268,7 +268,7 @@ namespace StreamDeckMonitorSwitch
         {
             targetValue = values[0];
 
-            if (mode != "toggle" && mode != "loop")
+            if (mode != ActionModes.TOGGLE && mode != ActionModes.LOOP)
             {
                 return true;
             }
@@ -398,7 +398,7 @@ namespace StreamDeckMonitorSwitch
                 return;
             };
 
-            var monitorspayload = JObject.FromObject(new InspectorDataSourceDTO("getMonitors", monitorsPayloadRaw));
+            var monitorspayload = JObject.FromObject(new InspectorDataSourceDTO(Constants.PiEvents.GET_MONITORS, monitorsPayloadRaw));
             var serialized = monitorspayload.ToString(Formatting.None);
 
             if (!force && serialized == lastMonitorsPayload)
@@ -434,7 +434,7 @@ namespace StreamDeckMonitorSwitch
                 return;
             };
 
-            var propertiesPayload = JObject.FromObject(new InspectorDataSourceDTO("getProperties", propertiesPayloadRaw));
+            var propertiesPayload = JObject.FromObject(new InspectorDataSourceDTO(Constants.PiEvents.GET_PROPERTIES, propertiesPayloadRaw));
             var serialized = propertiesPayload.ToString(Formatting.None);
 
             if (!force && serialized == lastPropertiesPayload)
@@ -479,7 +479,7 @@ namespace StreamDeckMonitorSwitch
                 return;
             }
 
-            var valuesPayload = JObject.FromObject(new InspectorDataSourceDTO("getValues", valuesPayloadRaw));
+            var valuesPayload = JObject.FromObject(new InspectorDataSourceDTO(Constants.PiEvents.GET_VALUES, valuesPayloadRaw));
             var serialized = valuesPayload.ToString(Formatting.None);
 
             if (!force && serialized == lastValuesPayload)
@@ -536,7 +536,7 @@ namespace StreamDeckMonitorSwitch
                     {
                         ["monitor"] = monitorModel,
                         ["property"] = propertyName,
-                        ["type"] = hasDiscreteValues ? "discrete" : "continuous"
+                        ["type"] = hasDiscreteValues ? Constants.VcpTypes.DISCRETE : Constants.VcpTypes.CONTINUOUS
                     };
 
                     // For continuous controls, read the max value from the monitor.
@@ -557,7 +557,7 @@ namespace StreamDeckMonitorSwitch
 
             var payload = new JObject
             {
-                ["event"] = "getVcpInfo",
+                ["event"] = Constants.PiEvents.GET_VCP_INFO,
                 ["items"] = infoItems
             };
 
@@ -577,23 +577,23 @@ namespace StreamDeckMonitorSwitch
             {
                 switch (payload.GetValue("event").Value<string>())
                 {
-                    case "getMonitors":
+                    case Constants.PiEvents.GET_MONITORS:
                         UpdateInspectorMonitors();
                         break;
-                    case "getProperties":
+                    case Constants.PiEvents.GET_PROPERTIES:
                         // Properties only exist for selected monitors; before that the PI
                         // stays pending and is answered once settings arrive (UpdateInspector).
                         if (Settings.Monitors.Count == 0) break;
 
                         UpdateInspectorProperties();
                         break;
-                    case "getValues":
+                    case Constants.PiEvents.GET_VALUES:
                         // Values only exist for selected monitors AND properties.
                         if (Settings.Monitors.Count == 0 || Settings.Properties.Count == 0) break;
 
                         UpdateInspectorValues();
                         break;
-                    case "getVcpInfo":
+                    case Constants.PiEvents.GET_VCP_INFO:
                         // Property type info (continuous vs discrete, max value).
                         if (Settings.Monitors.Count == 0 || Settings.Properties.Count == 0) break;
 

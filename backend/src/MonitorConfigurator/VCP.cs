@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace StreamDeckMonitorSwitch.ddcmon
 {
-    
+
     /**
      * <summary>
      * Defines possible VCP Property permissions flags
-     * </summary> 
+     * </summary>
      */
     [Flags]
     public enum VCPPropertyPerms : int
@@ -22,8 +22,8 @@ namespace StreamDeckMonitorSwitch.ddcmon
 
     /**
      * <summary>
-     * Defines serializable properites for infomation about VCP 
-     * </summary> 
+     * Defines serializable properites for infomation about VCP
+     * </summary>
      */
     [Serializable]
     public class VCPProperty
@@ -45,8 +45,8 @@ namespace StreamDeckMonitorSwitch.ddcmon
      *  <summary>
      *  Defines some of the known VCPs and their properties in statically accessible manner
      *  </summary>
-     * 
-     * 
+     *
+     *
      *  +----------+-------------------------------------+------------+
      *  | VCP_CODE | VCP_CODE_NAME                       | READ-WRITE |
      *  +----------+-------------------------------------+------------+
@@ -136,17 +136,11 @@ namespace StreamDeckMonitorSwitch.ddcmon
             POWER_MODE
         };
 
-        public static Dictionary<uint, VCPProperty> IndexByHexCode {
-            get {
-                return List.ToDictionary(prop => prop.code, prop => prop);
-            } 
-        }
+        public static readonly Dictionary<uint, VCPProperty> IndexByHexCode =
+            List.ToDictionary(prop => prop.code, prop => prop);
 
-        public static  Dictionary<string, VCPProperty> IndexByCodeName { 
-            get {
-                return List.ToDictionary(prop => prop.codeName, prop => prop);
-            }
-        }
+        public static readonly Dictionary<string, VCPProperty> IndexByCodeName =
+            List.ToDictionary(prop => prop.codeName, prop => prop);
     }
-    
+
 }

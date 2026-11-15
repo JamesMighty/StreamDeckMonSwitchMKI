@@ -18,9 +18,9 @@ namespace StreamDeckMonitorSwitch
         public static readonly int TIMER_PERIOD = 1000 * 10;
         public static readonly Dictionary<MonitorStatus.PowerStatus, Color> POWERSTATUS_COLORS = new Dictionary<MonitorStatus.PowerStatus, Color>()
         {
-            { MonitorStatus.PowerStatus.OFF, Color.Red },
+            { MonitorStatus.PowerStatus.OFF, Color.Gray },
             { MonitorStatus.PowerStatus.ON, Color.LimeGreen },
-            { MonitorStatus.PowerStatus.UNKNOWN, Color.Gray },
+            { MonitorStatus.PowerStatus.UNKNOWN, Color.Orange },
             { MonitorStatus.PowerStatus.SLEEP, Color.Yellow }
         };
 
@@ -87,7 +87,7 @@ namespace StreamDeckMonitorSwitch
                 throw new ArgumentNullException("Argument 'action' cannot be null.");
             }
 
-            SvgDocument icon = SvgDocument.Open("img/computer-monitor-white.svg");
+            SvgDocument icon = SvgDocument.Open(Constants.Assets.MONITOR_ICON_SVG);
 
             // Vertical squish applied to main_layer for single-monitor icons; the
             // VCP glyph compensates for it so it stays undistorted.
@@ -97,8 +97,8 @@ namespace StreamDeckMonitorSwitch
             {
                 Logger.Instance.LogMessage(TracingLevel.DEBUG, "Making multi-monitor icon");
 
-                var background_mon = (SvgElement)icon.GetElementById("main_layer").Clone();
-                background_mon.ID = "backgroound_layer";
+                var background_mon = (SvgElement)icon.GetElementById(Constants.SvgIds.MAIN_LAYER).Clone();
+                background_mon.ID = Constants.SvgIds.BACKGROUND_LAYER;
 
                 foreach ( var child in background_mon.Children)
                 {
@@ -131,9 +131,9 @@ namespace StreamDeckMonitorSwitch
                     var yScale = 1.5f * yScaleRaw;
                     glyphYScale = yScale;
 
-                    icon.GetElementById("main_layer").Transforms.Add(new SvgScale(1, yScale));
+                    icon.GetElementById(Constants.SvgIds.MAIN_LAYER).Transforms.Add(new SvgScale(1, yScale));
 
-                    icon.GetElementById("monitor_button").Transforms = new SvgTransformCollection() {
+                    icon.GetElementById(Constants.SvgIds.MONITOR_BUTTON).Transforms = new SvgTransformCollection() {
                         new SvgTranslate(0, -( 12f / yScale ) + 12),
                         new SvgScale(1, 1/yScale)
                     };
@@ -164,19 +164,19 @@ namespace StreamDeckMonitorSwitch
                 return;
 
             var name = propertyNames.Count == 1 ? propertyNames[0] : null;
-            var mainLayer = icon.GetElementById("main_layer");
+            var mainLayer = icon.GetElementById(Constants.SvgIds.MAIN_LAYER);
 
             if (name == VCP_PROPS.POWER_MODE.codeName)
             {
                 // Replace the power-button dot with the IEC 5009 power symbol.
                 // The group keeps id "monitor_button" so ApplyIconColors recolors it.
-                var oldButton = icon.GetElementById("monitor_button");
+                var oldButton = icon.GetElementById(Constants.SvgIds.MONITOR_BUTTON);
                 var parent = oldButton.Parent;
 
                 // Drawn at the old dot's native center (30.4, 7.04) so the old
                 // dot's transforms (squish compensation) can be reused verbatim.
                 var powerGroup = ParseSvgGroup(
-                    "<g id='monitor_button' fill='none' stroke='#ffffff' stroke-width='2' stroke-linecap='round'>"
+                    "<g id='" + Constants.SvgIds.MONITOR_BUTTON + "' fill='none' stroke='#ffffff' stroke-width='2' stroke-linecap='round'>"
                     + "<path d='M 30.4 2.5 L 30.4 7'/>"
                     + "<path d='M 27.6 4.2 A 4 4 0 1 0 33.2 4.2'/>"
                     + "</g>");
@@ -186,6 +186,7 @@ namespace StreamDeckMonitorSwitch
                     if (oldButton.Transforms != null && oldButton.Transforms.Count > 0)
                     {
                         powerGroup.Transforms = oldButton.Transforms;
+                        powerGroup.Transforms.Add(new SvgTranslate(0, -1f));
                     }
 
                     parent.Children.Remove(oldButton);
@@ -197,7 +198,7 @@ namespace StreamDeckMonitorSwitch
                 // Replace the power-button dot with a full-size brightness sun in
                 // the screen center. The sun keeps id "monitor_button" so it still
                 // receives power-state recoloring.
-                var oldButton = icon.GetElementById("monitor_button");
+                var oldButton = icon.GetElementById(Constants.SvgIds.MONITOR_BUTTON);
                 var parent = oldButton.Parent;
 
                 var displayValue = ResolveDisplayValue(action, name, null);
@@ -219,7 +220,7 @@ namespace StreamDeckMonitorSwitch
             {
                 // Arrow entering the screen from the right edge (source switch).
                 var glyph = ParseSvgGroup(
-                    "<g id='vcp_glyph' stroke='#ffffff' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'>"
+                    "<g id='" + Constants.SvgIds.VCP_GLYPH + "' stroke='#ffffff' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'>"
                     + "<path d='M 10 0 L -2 0 M 2 -4 L -2 0 L 2 4'/>"
                     + "</g>");
                 if (glyph != null)
@@ -269,12 +270,7 @@ namespace StreamDeckMonitorSwitch
             }
 
             string body;
-            if (name == VCP_PROPS.BRIGHTNESS.codeName)
-            {
-                // Sun whose rays grow with the current brightness value.
-                body = MakeBrightnessGlyphBody(value);
-            }
-            else if (name == VCP_PROPS.CONTRAST.codeName)
+            if (name == VCP_PROPS.CONTRAST.codeName)
             {
                 // Circle that fills proportionally to the current contrast value.
                 body = MakeContrastGlyphBody(value);
@@ -319,46 +315,9 @@ namespace StreamDeckMonitorSwitch
             }
 
             return ParseSvgGroup(
-                "<g id='vcp_glyph' stroke='#ffffff' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'>"
+                "<g id='" + Constants.SvgIds.VCP_GLYPH + "' stroke='#ffffff' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'>"
                 + body
                 + "</g>");
-        }
-
-        /**
-         * Brightness glyph with a moon-to-sun progression so low values stay
-         * readable: 0 rays renders a hollow crescent moon, 1 ray a filled
-         * crescent, and 2+ rays switch to a sun whose rays grow with the value.
-         * (The wrapping group uses fill='none', so fills must be explicit.)
-         */
-        private static string MakeBrightnessGlyphBody(int value)
-        {
-            var clamped = Math.Max(0, Math.Min(100, value));
-            int numRays = (int)Math.Round(clamped / 100.0 * 8);
-
-            if (numRays == 0)
-            {
-                // Hollow crescent outline (inherits the group's fill='none').
-                return "<path d='" + MakeCrescentPath(3.6, 2.5) + "' stroke-width='1.5'/>";
-            }
-            if (numRays == 1)
-            {
-                // Filled crescent.
-                return "<path d='" + MakeCrescentPath(3.6, 2.5) + "' fill='#ffffff' stroke='none'/>";
-            }
-
-            var body = "<circle cx='0' cy='0' r='3.2' fill='#ffffff' stroke='none'/>";
-            double innerR = 5.5;
-            double outerR = 8.0;
-            for (int i = 0; i < numRays; i++)
-            {
-                double rad = i * 45.0 * Math.PI / 180.0;
-                double x1 = Math.Round(innerR * Math.Sin(rad), 1);
-                double y1 = Math.Round(-innerR * Math.Cos(rad), 1);
-                double x2 = Math.Round(outerR * Math.Sin(rad), 1);
-                double y2 = Math.Round(-outerR * Math.Cos(rad), 1);
-                body += "<path d='M " + x1.ToString("0.#") + " " + y1.ToString("0.#") + " L " + x2.ToString("0.#") + " " + y2.ToString("0.#") + "'/>";
-            }
-            return body;
         }
 
         /**
@@ -380,16 +339,25 @@ namespace StreamDeckMonitorSwitch
             double outerR = 8.0;
 
             string body;
-            var crescent = MakeCrescentPath(3.6, 2.5);
+            // Sized to the sun's full reach (r 8), fattened so the lit area reads
+            // clearly, tilted ~30° left, and translated so its bounding box stays
+            // centered like the sun. The terminator arc is configured directly:
+            // innerRadius is its diameter/2 and centerOffsetX shifts its center
+            // right of the disc center. For the arc to pass through the tips
+            // (0, ±r), innerRadius must equal sqrt(centerOffsetX² + r²).
+            double crescentR = 8.0;
+            double crescentInnerRadius = 8.3;
+            double crescentCenterOffsetX = 6;
+            var crescent = MakeCrescentPath(crescentR, crescentInnerRadius, crescentCenterOffsetX);
             if (numRays == 0)
             {
                 // Hollow crescent: override the group fill so only the stroke shows.
-                body = "<path d='" + crescent + "' fill='none' stroke-width='1.5'/>";
+                body = "<path d='" + crescent + "' fill='none' stroke-width='1.5' transform='rotate(-35) translate(2,0)'/>";
             }
             else if (numRays == 1)
             {
                 // Filled crescent (inherits the group fill).
-                body = "<path d='" + crescent + "' stroke='none'/>";
+                body = "<path d='" + crescent + "' stroke='none' transform='rotate(-35) translate(2,0)'/>";
             }
             else
             {
@@ -407,28 +375,39 @@ namespace StreamDeckMonitorSwitch
             }
 
             return ParseSvgGroup(
-                "<g id='monitor_button' fill='#ffffff' stroke='#ffffff' stroke-width='2' stroke-linecap='round'>"
+                "<g id='" + Constants.SvgIds.MONITOR_BUTTON + "' fill='#ffffff' stroke='#ffffff' stroke-width='2' stroke-linecap='round'>"
                 + body
                 + "</g>");
         }
 
         /**
          * Crescent moon path centered at the origin, opening to the right like
-         * the classic moon icon. The outer edge is the left semicircle of a disc
-         * with radius r; the terminator (inner edge) is an arc that bites into
-         * the disc so the lit crescent is `thickness` wide at its widest point.
+         * the classic moon icon. The outer edge is an arc of the disc with
+         * radius r (center at origin); the terminator (inner edge) is an arc of
+         * radius innerRadius whose center sits centerOffsetX to the right of the
+         * disc center. The crescent tips are the intersection points of the two
+         * circles, so innerRadius and centerOffsetX shape the crescent
+         * independently: larger innerRadius flattens the terminator, larger
+         * centerOffsetX moves the tips and changes the lit width.
          */
-        private static string MakeCrescentPath(double r, double thickness)
+        private static string MakeCrescentPath(double r, double innerRadius, double centerOffsetX)
         {
-            // Terminator arc circle: center (cx, 0), passing through (0, ±r) and
-            // the inner tip (-(r - thickness), 0).
-            double cx = thickness * (2 * r - thickness) / (2 * (r - thickness));
-            double innerR = cx + (r - thickness);
+            // Intersection of x² + y² = r² and (x - centerOffsetX)² + y² = innerRadius².
+            double xTip = (r * r - innerRadius * innerRadius + centerOffsetX * centerOffsetX) / (2 * centerOffsetX);
+            double yTip = Math.Sqrt(Math.Max(0, r * r - xTip * xTip));
+
+            // Outer arc (via the left extreme) is major when the tips sit right of the y-axis.
+            int outerLargeArc = xTip > 0 ? 1 : 0;
+            // Terminator arc is major when the tips sit right of its own center.
+            int innerLargeArc = xTip > centerOffsetX ? 1 : 0;
+
+            var xs = Math.Round(xTip, 2).ToString("0.##");
+            var ys = Math.Round(yTip, 2).ToString("0.##");
             var rs = r.ToString("0.##");
-            var irs = innerR.ToString("0.##");
-            return "M 0 -" + rs
-                + " A " + rs + " " + rs + " 0 0 0 0 " + rs
-                + " A " + irs + " " + irs + " 0 0 1 0 -" + rs
+            var irs = innerRadius.ToString("0.##");
+            return "M " + xs + " -" + ys
+                + " A " + rs + " " + rs + " 0 " + outerLargeArc + " 0 " + xs + " " + ys
+                + " A " + irs + " " + irs + " 0 " + innerLargeArc + " 1 " + xs + " -" + ys
                 + " Z";
         }
 
@@ -522,7 +501,7 @@ namespace StreamDeckMonitorSwitch
             // Brightness replaces the power-button dot (id "monitor_button");
             // other continuous glyphs live in the screen area (id "vcp_glyph").
             var isBrightnessButton = name == VCP_PROPS.BRIGHTNESS.codeName;
-            var glyphId = isBrightnessButton ? "monitor_button" : "vcp_glyph";
+            var glyphId = isBrightnessButton ? Constants.SvgIds.MONITOR_BUTTON : Constants.SvgIds.VCP_GLYPH;
 
             var oldGlyph = action.svgIcon.GetElementById(glyphId);
             if (oldGlyph == null)
@@ -701,16 +680,16 @@ namespace StreamDeckMonitorSwitch
             ).Count();
 
             if (monitorsSelectedAsWanted == monitorsWhereSelectionWanted)
-                action.svgIcon.GetElementById("monitor_outline").Fill = new SvgColourServer(Color.LimeGreen);
+                action.svgIcon.GetElementById(Constants.SvgIds.MONITOR_OUTLINE).Fill = new SvgColourServer(Color.LimeGreen);
             if (monitorsSelectedAsWanted < monitorsWhereSelectionWanted)
-                action.svgIcon.GetElementById("monitor_outline").Fill = new SvgColourServer(Color.White);
+                action.svgIcon.GetElementById(Constants.SvgIds.MONITOR_OUTLINE).Fill = new SvgColourServer(Color.White);
 
             // The power mode byte is not guaranteed to be a known enum value.
             var powerColor = POWERSTATUS_COLORS.TryGetValue(finalPowerStatus.Power, out var knownColor)
                 ? knownColor
                 : POWERSTATUS_COLORS[MonitorStatus.PowerStatus.UNKNOWN];
 
-            var powerElement = action.svgIcon.GetElementById("monitor_button");
+            var powerElement = action.svgIcon.GetElementById(Constants.SvgIds.MONITOR_BUTTON);
             if (powerElement == null)
                 return;
 

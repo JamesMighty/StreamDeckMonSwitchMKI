@@ -1,31 +1,43 @@
 ---
 - name: Deploy plugin
   hosts: host-win
+  vars:
+    needs_deploy: >-
+      {{ (hostvars['localhost'].backend_changed | default(false) | bool)
+         or (hostvars['localhost'].frontend_changed | default(false) | bool) }}
 
   tasks:
-  - name: Kill StreamDeck
+  - name: Kill StreamDeck and plugin process
     # need WMI perms Enable remote and Execute methods
-    ansible.windows.win_shell: "Stop-Process -Name StreamDeck -Force"
+    # Kill both the Stream Deck UI and the plugin backend so DLLs are unlocked
+    ansible.windows.win_shell: |
+      Stop-Process -Name StreamDeck -Force -ErrorAction SilentlyContinue
+      Stop-Process -Name StreamDeckMonitorSwitch -Force -ErrorAction SilentlyContinue
+      Start-Sleep -Seconds 2
     args:
       executable: powershell
     # If already dead, error can be ignored
     ignore_errors: true
+    when: needs_deploy | bool
 
   - name: Delete content & directory
     ansible.windows.win_file:
       state: absent
       path: "{{ hostvars[inventory_hostname].release_plugins_dir }}\\{{ hostvars[inventory_hostname].release_plugin_dir_name }}"
+    when: needs_deploy | bool
 
   - name: Delete content & directory
     ansible.windows.win_file:
       state: directory
       path: "{{ hostvars[inventory_hostname].release_plugins_dir }}\\{{ hostvars[inventory_hostname].release_plugin_dir_name }}"
+    when: needs_deploy | bool
 
   - name: Copy files to Stream Deck plugin dir
     ansible.windows.win_copy:
       remote_src: true
       src: "{{ hostvars[inventory_hostname].plugin_home }}\\release\\build\\"
       dest: "{{ hostvars[inventory_hostname].release_plugins_dir }}\\{{ hostvars[inventory_hostname].release_plugin_dir_name }}"
+    when: needs_deploy | bool
 
   # Start-Process will not work as it cannot open interactive executables remotely
   # workaround:
@@ -33,7 +45,7 @@
   #   2. Use Scheduled Task - need WMI perms Enable remote and Execute methods
   - name: Start StreamDeck
     ansible.windows.win_shell: |
-      $Taskname = "RunStreamDeck""
+      $Taskname = "RunStreamDeck"
       $User = "{{ hostvars[inventory_hostname].ansible_user }}";
       $StreamDeck = New-ScheduledTaskAction -Execute "{{ hostvars[inventory_hostname].streamdeck_exe_path }}";
       if(Get-ScheduledTask -TaskName $Taskname -ErrorAction Ignore){
@@ -43,3 +55,9 @@
       Start-ScheduledTask -TaskName $Taskname
     args:
       executable: powershell
+    when: needs_deploy | bool
+
+  - name: Report skip
+    ansible.builtin.debug:
+      msg: "No changes detected — skipping deploy."
+    when: not (needs_deploy | bool)

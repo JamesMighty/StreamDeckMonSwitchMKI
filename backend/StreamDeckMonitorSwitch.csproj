@@ -158,6 +158,14 @@
     </Compile>
     <Compile Include="src\Actions\ActionModes.cs" />
     <Compile Include="src\Actions\MonitorPluginAction.cs" />
+    <Compile Include="src\Abstraction\DdcCiDriver.cs" />
+    <Compile Include="src\Abstraction\IDdcCiDriver.cs" />
+    <Compile Include="src\Abstraction\IIconRenderer.cs" />
+    <Compile Include="src\Abstraction\IMonitorService.cs" />
+    <Compile Include="src\Abstraction\IMonitorStateReader.cs" />
+    <Compile Include="src\Abstraction\MonitorService.cs" />
+    <Compile Include="src\Abstraction\MonitorStateReader.cs" />
+    <Compile Include="src\Constants.cs" />
     <Compile Include="src\DTOs\IInspectorDataSourceItemDTO.cs" />
     <Compile Include="src\DTOs\InspectorDataSourceDTO.cs" />
     <Compile Include="src\DTOs\InspectorDataSourceItemDTO.cs" />

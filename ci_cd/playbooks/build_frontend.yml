@@ -11,38 +11,62 @@
         - "example/pi/sdpi-components.js"
         - "example/pi/sdpi-components.js.map"
         - "dist/sdpi-components.js"
+      when: hostvars['localhost'].frontend_build_changed | default(true) | bool
+
+    - name: Clean workplace
+      ansible.builtin.file:
+        state: absent
+        path: "{{ hostvars[inventory_hostname].workplace }}/{{ item }}"
+      with_items:
+        - "src"
+        - "dist"
+        - "example"
+        - "scripts"
+        - "node_modules"
+        - "jest.config.ts"
+        - "package.json"
+        - "package-lock.json"
+        - "tsconfig.json"
+        - "rollup.config.mjs"
+      when: hostvars['localhost'].frontend_build_changed | default(true) | bool
 
     - name: Search plugin home
       ansible.builtin.shell:
         chdir: "{{ hostvars[inventory_hostname].plugin_home }}/frontend/sdpi-components/"
         cmd: ls
       register: plugin_home_frontend_ls
+      when: hostvars['localhost'].frontend_build_changed | default(true) | bool
 
     - name: Clone frontend to workplace
       ansible.builtin.shell:
         chdir: "{{ hostvars[inventory_hostname].plugin_home }}/frontend/sdpi-components"
         cmd: "cp -fR ./{{ item }} {{ hostvars[inventory_hostname].workplace }}/{{ item }}"
-      with_items: "{{ plugin_home_frontend_ls.stdout_lines | difference([ 'node_modules', '.github', '.vscode', 'assets' ]) }}"
+      with_items: "{{ plugin_home_frontend_ls.stdout_lines | default([]) | difference([ 'node_modules', '.github', '.vscode', 'assets' ]) }}"
+      when: hostvars['localhost'].frontend_build_changed | default(true) | bool
 
     - name: Install deps
       ansible.builtin.shell:
         chdir: "{{ hostvars[inventory_hostname].workplace }}"
         cmd: npm install --force
-
-    - name: Npm audit
-      ansible.builtin.shell:
-        chdir: "{{ hostvars[inventory_hostname].workplace }}"
-        cmd: npm audit fix --force
+      when: hostvars['localhost'].frontend_build_changed | default(true) | bool
 
     - name: Test sdpi-components
       ansible.builtin.shell:
         chdir: "{{ hostvars[inventory_hostname].workplace }}"
         cmd: npm run test-silent
+      when: hostvars['localhost'].frontend_build_changed | default(true) | bool
 
     - name: Build sdpi-components
       ansible.builtin.shell:
         chdir: "{{ hostvars[inventory_hostname].workplace }}"
         cmd: npm run build_only
+      when: hostvars['localhost'].frontend_build_changed | default(true) | bool
+
+    - name: Compile property inspector TypeScript
+      ansible.builtin.shell:
+        chdir: "{{ hostvars[inventory_hostname].plugin_home }}/frontend/property_inspector"
+        cmd: npx --yes -p typescript@5.3 tsc -p tsconfig.json
+      when: hostvars['localhost'].frontend_changed | default(true) | bool
 
     - name: Copy frontend sdpi-components build to plugin home
       ansible.builtin.shell:
@@ -52,3 +76,4 @@
         - "example/pi/sdpi-components.js.map"
         - "example/pi/sdpi-components.js"
         - "dist/sdpi-components.js"
+      when: hostvars['localhost'].frontend_build_changed | default(true) | bool

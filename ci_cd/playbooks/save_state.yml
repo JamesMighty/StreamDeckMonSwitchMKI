@@ -1,0 +1,25 @@
+---
+- name: Save build state
+  hosts: localhost
+  gather_facts: false
+  vars:
+    state_dir: "{{ plugin_home }}/release/.ci_state"
+
+  tasks:
+    - name: Save backend hash
+      ansible.builtin.copy:
+        content: "{{ hostvars['localhost'].backend_hash_result.stdout | trim }}\n"
+        dest: "{{ state_dir }}/backend.hash"
+      when: hostvars['localhost'].backend_changed | bool
+
+    - name: Save frontend build hash
+      ansible.builtin.copy:
+        content: "{{ hostvars['localhost'].frontend_build_hash_result.stdout | trim }}\n"
+        dest: "{{ state_dir }}/frontend_build.hash"
+      when: hostvars['localhost'].frontend_build_changed | bool
+
+    - name: Save frontend full hash
+      ansible.builtin.copy:
+        content: "{{ hostvars['localhost'].frontend_all_hash_result.stdout | trim }}\n"
+        dest: "{{ state_dir }}/frontend_all.hash"
+      when: hostvars['localhost'].frontend_changed | bool

@@ -127,11 +127,11 @@ namespace StreamDeckMonitorSwitch.ddcmon
             {
                 switch(kvp.Key)
                 {
-                    case "cmds":
+                    case Constants.CapsKeys.CMDS:
                         monitor.cmds.AddRange(kvp.Value.Split(' ')
                             .Select(str => int.Parse(str, System.Globalization.NumberStyles.HexNumber)));
                         break;
-                    case "vcp":
+                    case Constants.CapsKeys.VCP:
                         var vcps = kvp.Value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                         var vcpFloor = 0;
                         var vcpValues = new List<int>();
@@ -214,7 +214,7 @@ namespace StreamDeckMonitorSwitch.ddcmon
         // interval of processes that load this assembly.
         private static int ReadUpdatePeriodMs()
         {
-            var overrideValue = Environment.GetEnvironmentVariable("SDMONSWITCH_UPDATE_PERIOD_MS");
+            var overrideValue = Environment.GetEnvironmentVariable(Constants.EnvVars.UPDATE_PERIOD_MS);
             int parsed;
             if (!string.IsNullOrEmpty(overrideValue) && int.TryParse(overrideValue, out parsed) && parsed > 0)
             {
@@ -225,6 +225,8 @@ namespace StreamDeckMonitorSwitch.ddcmon
 
         public static List<PhysicalMonitor> Monitors { get; private set; } = new List<PhysicalMonitor>();
         private static List<PhysicalMonitor> LoadingMonitors { get; set; } = new List<PhysicalMonitor>();
+        private static List<PhysicalMonitor> _retiredMonitors = new List<PhysicalMonitor>();
+        private static readonly object _updateLock = new object();
 
         public delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor, IntPtr dwData);
 
@@ -276,9 +278,9 @@ namespace StreamDeckMonitorSwitch.ddcmon
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetVCPFeatureAndVCPFeatureReply([In] IntPtr hMonitor, [In] uint dwVCPCode, uint pvct, ref byte currentValue, ref byte maxValue);
 
-        [DllImport("gdi32.dll", EntryPoint = "DDCCIGetVCPFeature", SetLastError = true)]
+        [DllImport("Dxva2.dll", EntryPoint = "DestroyPhysicalMonitor", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool DDCCIGetVCPFeature([In] IntPtr hMonitor, [In] uint dwVCPCode, uint pvct, ref uint pdwCurrentValue, ref uint pdwMaximumValue);
+        private static extern bool DestroyPhysicalMonitor(IntPtr hPhysicalMonitor);
 
         [DllImport("user32.dll")]
         static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
@@ -314,42 +316,58 @@ namespace StreamDeckMonitorSwitch.ddcmon
 #endif
 
             PHYSICAL_MONITOR[] fMonitor = ArrayPool<PHYSICAL_MONITOR>.Shared.Rent((int)(nfmon));
-            if(!GetPhysicalMonitorsFromHMONITOR(hMonitor, 1, fMonitor))
+            try
             {
-                Console.WriteLine("Could not get physical monitor struct from monitor handle");
-                return true;
-            }
-
-            for (int i = 0; i < nfmon; i++)
-            {
-                uint capsLen = 0;
-
-                if (!GetCapabilitiesStringLength(fMonitor[i].hPhysicalMonitor, ref capsLen)) {
-                    Console.WriteLine("Could not get capabilities string lenght");
-                    continue;
-                }
-#if DEBUG
-                Console.WriteLine("Caps len: {0}", capsLen);
-#endif
-                char[] buffer = ArrayPool<char>.Shared.Rent((int)(capsLen));
-
-                if (!CapabilitiesRequestAndCapabilitiesReply(fMonitor[i].hPhysicalMonitor, buffer, capsLen)) {
-                    Console.WriteLine("Could not get capabilities string");
-                    continue;
-                }
-#if DEBUG
-                Console.WriteLine(buffer);
-#endif
-                var physicalMon = PhysicalMonitor.fromEmumeration(buffer, capsLen, fMonitor[i], mi, hMonitor);
-                LoadingMonitors.Add(physicalMon);
-#if DEBUG
-                Console.WriteLine(JObject.FromObject(physicalMon).ToString());
-                foreach(var kv in physicalMon.possibleVCPValues)
+                if (!GetPhysicalMonitorsFromHMONITOR(hMonitor, (int)nfmon, fMonitor))
                 {
-                    Console.WriteLine(JObject.FromObject(kv.Key).ToString()+" :: ["+String.Join(", ", kv.Value)+"]\n");
+                    Console.WriteLine("Could not get physical monitor struct from monitor handle");
+                    return true;
                 }
-#endif
 
+                for (int i = 0; i < nfmon; i++)
+                {
+                    uint capsLen = 0;
+
+                    if (!GetCapabilitiesStringLength(fMonitor[i].hPhysicalMonitor, ref capsLen))
+                    {
+                        Console.WriteLine("Could not get capabilities string lenght");
+                        DestroyPhysicalMonitor(fMonitor[i].hPhysicalMonitor);
+                        continue;
+                    }
+#if DEBUG
+                    Console.WriteLine("Caps len: {0}", capsLen);
+#endif
+                    char[] buffer = ArrayPool<char>.Shared.Rent((int)(capsLen));
+                    try
+                    {
+                        if (!CapabilitiesRequestAndCapabilitiesReply(fMonitor[i].hPhysicalMonitor, buffer, capsLen))
+                        {
+                            Console.WriteLine("Could not get capabilities string");
+                            DestroyPhysicalMonitor(fMonitor[i].hPhysicalMonitor);
+                            continue;
+                        }
+#if DEBUG
+                        Console.WriteLine(buffer);
+#endif
+                        var physicalMon = PhysicalMonitor.fromEmumeration(buffer, capsLen, fMonitor[i], mi, hMonitor);
+                        LoadingMonitors.Add(physicalMon);
+#if DEBUG
+                        Console.WriteLine(JObject.FromObject(physicalMon).ToString());
+                        foreach (var kv in physicalMon.possibleVCPValues)
+                        {
+                            Console.WriteLine(JObject.FromObject(kv.Key).ToString() + " :: [" + String.Join(", ", kv.Value) + "]\n");
+                        }
+#endif
+                    }
+                    finally
+                    {
+                        ArrayPool<char>.Shared.Return(buffer);
+                    }
+                }
+            }
+            finally
+            {
+                ArrayPool<PHYSICAL_MONITOR>.Shared.Return(fMonitor);
             }
 #if DEBUG
             Console.WriteLine("---");
@@ -360,18 +378,28 @@ namespace StreamDeckMonitorSwitch.ddcmon
 
         public static void UpdateMonitors()
         {
-            LoadingMonitors.Clear();
-            MonitorEnumDelegate med = new MonitorEnumDelegate(MonitorEnum);
-            EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, med, IntPtr.Zero);
-            Monitors = new List<PhysicalMonitor>(LoadingMonitors);
-        }
+            lock (_updateLock)
+            {
+                LoadingMonitors.Clear();
+                MonitorEnumDelegate med = new MonitorEnumDelegate(MonitorEnum);
+                EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, med, IntPtr.Zero);
 
-        [STAThread]
-        public static void Main()
-        {
-            MonitorEnumDelegate med = new MonitorEnumDelegate(MonitorEnum);
-            EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, med, IntPtr.Zero);
-            Console.ReadKey();
+                // Destroy handles retired in the PREVIOUS cycle. They have had a
+                // full update interval (10s) for any in-flight DDC/CI call to finish.
+                foreach (var mon in _retiredMonitors)
+                {
+                    if (mon.Struct.hPhysicalMonitor != IntPtr.Zero)
+                    {
+                        DestroyPhysicalMonitor(mon.Struct.hPhysicalMonitor);
+                    }
+                }
+
+                // Retire the current generation; keep handles alive one more cycle
+                // so concurrent readers (KeyPressed, IconManager refresh) don't use
+                // a destroyed handle.
+                _retiredMonitors = Monitors;
+                Monitors = new List<PhysicalMonitor>(LoadingMonitors);
+            }
         }
 
     }
